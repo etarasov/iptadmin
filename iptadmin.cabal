@@ -41,11 +41,13 @@ Executable iptadmin
                     containers >= 0.3,
                     time >= 1.1 && < 2,
                     random >= 1.0 && < 2,
-                    pam >= 0.1,
+                    pam >= 0.1 && < 1,
                     unix >= 2.4 && < 3,
                     ConfigFile >= 1.0 && < 2,
                     filepath >= 1.1 && < 2,
-                    network >= 2.2 && < 3
+                    network >= 2.2 && < 3,
+                    hsyslog >= 1.4 && < 2,
+                    hdaemonize >= 0.4.4 && < 0.5
     Main-Is:        Main.hs
     Other-modules:  IptAdmin.AccessControl
                     IptAdmin.AddChainPage

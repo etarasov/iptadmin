@@ -27,7 +27,9 @@ import IptAdmin.Utils
 import Network.Socket
 import Prelude hiding (catch)
 import System.Exit
+import System.Posix.Daemonize
 import System.Posix.User
+import System.Posix.Syslog
 
 main :: IO ()
 main = do
@@ -39,27 +41,30 @@ main = do
         Left e -> do
             putStrLn e
             exitFailure
-        Right config -> do
-            sessions <- newIORef empty
-            let httpConf = Conf (cPort config) Nothing
+        Right config ->
+            serviced $ simpleDaemon {program = startDaemon config, user = Just "root", syslogOptions = [PID, PERROR]}
 
-            -- create socket manually because we must listen only on 127.0.0.1
-            sock <- socket AF_INET Stream defaultProtocol
-            setSocketOption sock ReuseAddr 1
-            loopbackIp <- inet_addr "127.0.0.1"
-            bindSocket sock $
-                SockAddrInet (fromInteger $ toInteger $ cPort config) loopbackIp
-            listen sock (max 1024 maxListenQueue)
+startDaemon :: IptAdminConfig -> a -> IO ()
+startDaemon config _ = do
+    sessions <- newIORef empty
+    let httpConf = Conf (cPort config) Nothing
 
-            httpTid <- forkIO $ simpleHTTPWithSocket' unpackErrorT
-                                                      sock
-                                                      httpConf
-                                                      $ authorize sessions config control
+    -- create socket manually because we must listen only on 127.0.0.1
+    sock <- socket AF_INET Stream defaultProtocol
+    setSocketOption sock ReuseAddr 1
+    loopbackIp <- inet_addr "127.0.0.1"
+    bindSocket sock $
+        SockAddrInet (fromInteger $ toInteger $ cPort config) loopbackIp
+    listen sock (max 1024 maxListenQueue)
 
-            waitForTermination
-            putStrLn "Shutting down..."
-            killThread httpTid
-            putStrLn "Shutdown complete"
+    httpTid <- forkIO $ simpleHTTPWithSocket' unpackErrorT
+                                              sock
+                                              httpConf
+                                              $ authorize sessions config control
+    waitForTermination
+    syslog Notice "Shutting down..."
+    killThread httpTid
+    syslog Notice "Shutdown complete"
 
 unpackErrorT :: (Monad m) => UnWebT (ErrorT String m) a -> UnWebT m a
 unpackErrorT handler = do
