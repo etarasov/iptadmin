@@ -1,0 +1,16 @@
+Iptadmin 1.0.0    05.07.2011:
+
+  * First public release.
+  * Program core.
+  * Minimum iptables-helpers library.
+  * Minimum pam bindings library. Pam authorisation.
+  * Prototype for edit pages.
+  * Add support of several iptables rules parameters.
+  * Add support of user defined chains.
+  * Handle user defined chains in nat table.
+  * Main show page prototype.
+  * Protect user from denying access to iptadmin interface.
+  * Rule verification.
+  * Project web site.
+  * Binary distribution and few rpm packages.
+  * The simplest init script.

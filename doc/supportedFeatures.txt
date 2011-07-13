@@ -1,0 +1,44 @@
+Supported Iptables features:
+============================
+
+* Displaying filter, nat and mangle tables with chains and rules
+* User defined chains in all tables
+  * Creating, renaming and deleting empty chains
+  * Resolving chain incompatibilities in nat table
+     (MASQUERADE target can't be invoked from PREROUTING)
+  * Determinig user defined chain type in nat table
+     (POSTROUTING or PREROUTING).
+* General rules editing
+  * Adding rule at the end of chain
+  * Insergint rule in arbitrary position
+  * Editing rule
+  * Deleting rule
+* Supported rule options and targets
+  * Common options
+    * Source
+    * Destination
+    * Protocol
+      * UDP
+      * TCP
+      * ICMP
+    * Source port
+    * Destination port
+    * Input interface
+    * Output interface
+    * State
+  * Filter targets
+    * ACCEPT
+    * DROP
+    * REJECT
+      * all possible options
+    * User defined chain
+  * Nat targets
+    * DNAT
+    * REDIRECT
+    * SNAT
+    * MASQUERADE
+    * User defined chain
+    * All possible options for all targets. But interface is not very friendly for them yet.
+* Editing policy for builtin chains
+  * ACCEPT
+  * DROP

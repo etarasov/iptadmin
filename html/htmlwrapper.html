@@ -1,0 +1,258 @@
+<!--h htmlWrapper content h-->
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Iptables Manager</title>
+        <meta name="AUTHOR" content="Evgeny Tarasov" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="DESCRIPTION" content="description"/>
+        <meta name="KEYWORDS" content="iptables, haskell" />
+        <style type="text/css">
+            body {
+                font-family:Arial,Helvetica,sans-serif;
+                background-color: #f7f7f7;
+                color: #5b5b5b;
+            }
+            tr.even {
+                background-color:#f0f0f0;
+            }
+            table {
+                border-collapse : collapse;
+                background-color: #ffffff;
+            }
+            th {
+                background-color: #b7b7b7;
+                color: #f7f7f7;
+            }
+            table, th, td {
+                border: 1px dotted black;
+                padding: 5px;
+            }
+            td.rightAlign {
+                text-align:right;
+            }
+            a:link, a:visited {
+                color: #856767;
+            }
+            a:hover {
+                color: #bb1010;
+            }
+            a:active {
+                color: #666666;
+            }
+            a.title:link, a.title:visited {
+                color: #856767;
+                text-decoration: none;
+            }
+            a.title:active, a.title:hover {
+                text-decoration: underline;
+            }
+            a.button:link, a.button:visited {
+                display: block;
+                float: right;
+                font-weigth: bold;
+                color: #f7f7f7;
+                background-color: #b5aaaa;
+                width: 10px;
+                padding: 0px 4px 0px 4px;
+                margin: 0px 3px 0px 0px;
+                text-decoration: none;
+                text-align: center;
+            }
+            a.button:hover, a.button:active {
+                background-color: #bb1010;
+            }
+            div.logout {
+                float:right;
+                padding: 20px;
+            }
+            #title {
+                float: left;
+                padding: 15px;
+                color: #bbbbbb;
+                font-size: 26px;
+            }
+            span.version {
+                margin-left: 0.5em;
+                font-size: 0.5em;
+            }
+            #links {
+                margin-left: auto;
+                margin-right: auto;
+                width: 9.5em;
+                padding: 20px;
+                /*padding-left: 65px;
+                */
+                text-align: center;
+                /*
+                margin-left: 200px;
+                */
+            }
+            a.activeTableLink:link, a.activeTableLink:visited {
+                display: block;
+                float:left;
+                color: #f7f7f7;
+                background-color: #b5aaaa;
+                padding: 4px;
+                margin: 0px 3px 0px 0px;
+                text-decoration: none;
+            }
+            a.activeTableLink:hover, a.activeTableLink:active {
+                background-color: #bb1010;
+            }
+            a.tableLink:link, a.tableLink:visited {
+                display: block;
+                float:left;
+                color: #856767;
+                background-color: #f7f7f7;
+                padding: 4px;
+                margin: 0px 3px 0px 0px;
+                text-decoration: none;
+            }
+            a.tableLink:hover, a.tableLink:active {
+                color: #bb1010;
+            }
+            #localLinks {
+                float: left;
+                background: #deeeee;
+                margin-left: 100px;
+                padding: 10px;
+            }
+            div.pageHeader {
+                width: 50%;
+                margin-top: 10px;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+            #rules {
+                margin-left: auto;
+                margin-right: auto;
+                width: 100%;
+                max-width: 1000px;
+                padding-top: 10px;
+            }
+            div.loginForm {
+                /*float: left;
+                margin-left: auto;
+                margin-right: auto;
+                */
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-top: -40px;
+                margin-left: -130px;
+            }
+            div.loginForm2 {
+                height: 80px;
+                width: 280px;
+                background: #ffffff;
+                border: 1px solid #666666;
+                border-radius: 15px;
+                -moz-border-radius: 15px;
+                padding: 15px;
+                text-align: center;
+            }
+            span.loginForm {
+                color: #ababab;
+            }
+            table.loginForm, td.loginForm {
+                border: none;
+                padding: 0px;
+            }
+            td.loginForm {
+                padding: 2px;
+            }
+            div.editForm {
+                padding-top: 20px;
+                margin-left: auto;
+                margin-right: auto;
+                max-width: 700px
+            }
+            table.rules {
+                margin-top: 10px;
+                border: 1px solid #666666;
+                width: 100%;
+            }
+            table.editForm {
+                border: 1px solid #666666;
+            }
+            th.col1 {
+                width : 15px;
+            }
+            th.col4 {
+                width : 60px;
+            }
+            th.col6 {
+                width : 64px;
+            }
+            /*
+            Цвета для различных targets
+            */
+            span.acceptTarget {
+                color: #4e994f;
+            }
+            span.dropTarget {
+                color: #dd2222;
+            }
+            span.rejectTarget {
+                color: #a54638;
+            }
+            span.snatTarget {
+                color: #7a997b;
+            }
+            span.masqueradeTarget {
+                color: #4e994f;
+            }
+            span.dnatTarget {
+                color: #77aac5;
+            }
+            span.redirectTarget {
+                color: #7783c5;
+            }
+            span.chainTarget {
+                color: #000000;
+            }
+            span.unknownTarget {
+                color: #ababab;
+            }
+            /*
+            Стили для вложенной таблицы и элемента таблицы,
+            в которой вкладывается таблица
+            */
+            td.inline {
+                margin: 0;
+                padding: 0;
+            }
+            table.inline {
+                border-style: none;
+                width: 100%
+            }
+            /*
+            Стили элементов таблиц для скрытия рамки вокруг таблицы,
+            это приводило к утолщению сетки в местах сопряжения
+            */
+            th.target {
+                border-left: none;
+                border-top: none;
+            }
+            th.targetParam {
+                border-right: none;
+                border-top: none;
+            }
+            td.target {
+                border-bottom: none;
+                border-left: none;
+            }
+            td.targetParam {
+                border-bottom: none;
+                border-right: none;
+            }
+        </style>
+    </head>
+    <body>
+!@#content
+    </body>
+</html>
+<!--^^^-->

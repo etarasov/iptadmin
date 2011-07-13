@@ -1,0 +1,28 @@
+INSTALL
+=======
+
+1. make (or cabal install)
+2. sudo make install
+3. sudo /etc/init.d/iptadmin start
+
+In future all stuff will be installed with cabal install
+
+UNINSTALL
+=========
+
+sudo make uninstall
+
+Notes for debian-based distributions
+----------------------------------
+In some linux distributions, for example, debian and ubuntu,
+there is no "/etc/init.d/iptables save" script by default.
+And there is no mechanism for saving netfilter configuration.
+That's why user should manually setup a saving procedure.
+The article http://www.debian-administration.org/articles/445 can help to do this.
+After setting up saving procedure the file /etc/iptadmin/iptadmin.conf
+should be configured.  The parameter "save command" should be set up to something like
+"iptables-save > /etc/firewall.conf". It's the command for
+saving filrewall rules to a file which is read by iptables on startup.
+
+You can set 'save command' to 'echo' for testing purposes.
+But rules won't be saved after reboot in this case.
