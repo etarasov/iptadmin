@@ -27,9 +27,12 @@ import IptAdmin.Utils
 import Network.Socket
 import Prelude hiding (catch)
 import System.Exit
+import System.Posix.User
 
 main :: IO ()
 main = do
+    checkRunUnderRoot
+
     configE <- catch (runErrorT getConfig) $
         \ e -> return $ Left $ show (e :: SomeException)
     case configE of
@@ -98,3 +101,10 @@ commitChange = do
                         (m', True)
     when change saveIptables
     mzero
+
+checkRunUnderRoot :: IO ()
+checkRunUnderRoot = do
+    userID_ <- getEffectiveUserID
+    when (userID_ /= 0) $ do
+        putStrLn "the program have to be run under root privileges"
+        exitFailure
