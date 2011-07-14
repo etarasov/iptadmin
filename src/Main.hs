@@ -6,8 +6,10 @@ import Control.Exception
 import Control.Monad.Error
 import Control.Monad.State
 import Data.IORef
-import Data.Map
+import Data.List hiding (insert)
+import Data.Map hiding (map)
 import Data.Monoid
+import Data.Version
 import Happstack.Server.SimpleHTTP
 import Happstack.State
 import IptAdmin.AccessControl
@@ -25,14 +27,27 @@ import IptAdmin.System
 import IptAdmin.Types
 import IptAdmin.Utils
 import Network.Socket
+import Paths_iptadmin (version)
 import Prelude hiding (catch)
 import System.Exit
+import System.Environment
 import System.Posix.Daemonize
 import System.Posix.User
 import System.Posix.Syslog
 
 main :: IO ()
 main = do
+    args <- getArgs
+    case args of
+        ("--version":_) -> do
+            let ver = intercalate "." $ map show $ versionBranch version
+            putStrLn $ "Iptadmin v" ++ ver ++ ", (C) Evgeny Tarasov 2011"
+            exitSuccess
+        ("--help":_) -> do
+            putStrLn $ "usage: iptadmin (start|stop|restart)"
+            exitSuccess
+        _ -> return ()
+
     checkRunUnderRoot
 
     configE <- catch (runErrorT getConfig) $
