@@ -1,3 +1,9 @@
+Iptadmin 1.0.1    14.07.2011:
+  * Add command line options --version, --help.
+  * Syslog logging.
+  * Daemonize properly.
+  * Check that iptadmin is run under root.
+
 Iptadmin 1.0.0    05.07.2011:
 
   * First public release.
