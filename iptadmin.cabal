@@ -1,5 +1,5 @@
 Name:           iptadmin
-Version:        1.0.1
+Version:        1.1.0
 Cabal-Version:  >= 1.4
 Author:         Evgeny Tarasov
 Build-type:     Simple
@@ -34,7 +34,7 @@ Executable iptadmin
                     happstack-util >= 0.5 && < 0.5.1,
                     mtl >= 1.1,
                     safe >= 0.3,
-                    iptables-helpers >= 0.3 && < 0.4,
+                    iptables-helpers >= 0.4 && < 0.5,
                     process >= 1.0 && < 2,
                     blaze-html >= 0.4,
                     parsec >= 2.1,
