@@ -37,7 +37,7 @@ renderChain :: String -> Chain -> Html
 renderChain tableName (Chain n p _ rs) =
     H.table ! A.class_ "rules" $ do
         H.tr $ do
-            H.td ! A.colspan "3" $
+            H.td ! A.colspan "4" $
                 H.div ! A.id "chainName" $ fromString n
             H.td ! A.class_ "rightAlign" ! A.colspan "3" $
                 case p of
@@ -55,6 +55,7 @@ renderChain tableName (Chain n p _ rs) =
                         H.a ! A.href (fromString $ "/editpolicy?table="++tableName++"&chain="++n) $
                             fromString $ show a
         H.tr $ do
+            H.th ! A.class_ "col0" $ ""
             H.th ! A.class_ "col1" $ "#"
             H.th ! A.class_ "col2" $ "Modules"
             H.th ! A.class_ "col3" $ "Options"
@@ -68,7 +69,7 @@ renderChain tableName (Chain n p _ rs) =
 
 -- | (Table name, Chain name) -> Rule -> Html
 renderRule :: (String, String) -> (Rule, Int) -> Html
-renderRule (tableName, chainName) (Rule opts tar , ruleNum) =
+renderRule (tableName, chainName) (Rule counters opts tar , ruleNum) =
     let mainTr = if even ruleNum then H.tr ! A.class_ "even"
                                  else H.tr
         mods' = filter isModule opts
@@ -94,6 +95,7 @@ renderRule (tableName, chainName) (Rule opts tar , ruleNum) =
             _ -> False
     in
     mainTr $ do
+        H.td (fromString $ show counters)
         H.td (fromString $ show ruleNum)
         H.td $ fromString mods''
         H.td $ fromString opts''

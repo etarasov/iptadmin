@@ -61,7 +61,7 @@ pageHandlerPost = do
             editFormHtml (tableName, chainName, rulePosition, userChainNames) addFormParams $ Just formResp
         Right (opts, tar, formResp) -> do
             let (_, opts') = runState (mapM_ completeModules opts) opts
-            let rule = Rule opts' tar
+            let rule = Rule (Counters 0 0) opts' tar
 
             submit <- getInputString "submit"
             case submit of
@@ -70,7 +70,7 @@ pageHandlerPost = do
                                      ++ "' table in '" ++ chainName
                                      ++ "' chain in position " ++ show rulePosition
                     editFormHtml (tableName, chainName, rulePosition, userChainNames) addFormParams $ Just formResp
-                    ) ++ printRuleCanonical rule
+                    ) ++ printRuleForRun rule
                 "Submit" -> do
                     tryChange (replaceRule tableName chainName rulePosition rule)
                     redir $ "/show?table=" ++ tableName

@@ -16,7 +16,7 @@ import System.Process
 
 getIptablesSave :: IptAdmin String
 getIptablesSave = do
-    (_, o, _, h) <- liftIO $ runInteractiveCommand "iptables-save"
+    (_, o, _, h) <- liftIO $ runInteractiveCommand "iptables-save -c"
     ec <- liftIO $ waitForProcess h
     case ec of
         ExitSuccess -> liftIO $ hGetContents o
@@ -51,7 +51,7 @@ appendRule :: String     -- ^ Table name
            -> Rule       -- ^ Rule
            -> IptAdmin ()
 appendRule table chain rule = do
-    let rule' = printRuleCanonical rule
+    let rule' = printRuleForRun rule
     (_, _, e, h) <- liftIO $ runInteractiveCommand $ "iptables -t " ++ table ++ " -A " ++ chain ++ " " ++ rule'
     ec <- liftIO $ waitForProcess h
     case ec of
@@ -83,7 +83,7 @@ insertRule :: String     -- ^ Table name
            -> Rule       -- ^ Rule
            -> IptAdmin ()
 insertRule table chain rulePos rule = do
-    let rule' = printRuleCanonical rule
+    let rule' = printRuleForRun rule
     (_, _, e, h) <- liftIO $ runInteractiveCommand $ "iptables -t " ++ table
                                                 ++ " -I " ++ chain
                                                 ++ " " ++ show rulePos
@@ -101,7 +101,7 @@ replaceRule :: String    -- ^ Table name
             -> Rule      -- ^ Rule
             -> IptAdmin ()
 replaceRule table chain rulePos rule = do
-    let rule' = printRuleCanonical rule
+    let rule' = printRuleForRun rule
     (_, _, e, h) <- liftIO $ runInteractiveCommand $ "iptables -t " ++ table
                                                 ++ " -R " ++ chain
                                                 ++ " " ++ show rulePos

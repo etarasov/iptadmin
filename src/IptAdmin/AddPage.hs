@@ -57,7 +57,7 @@ pageHandlerPost = do
                 editFormHtml (tableName, chainName, 0, userChainNames) addFormParams $ Just formMes
             Right (options, target, formMes) -> do
                 let (_, options') = runState (mapM_ completeModules options) options
-                let rule = Rule options' target
+                let rule = Rule (Counters 0 0) options' target
 
                 submit <- getInputString "submit"
                 case submit of
@@ -66,7 +66,7 @@ pageHandlerPost = do
                                          ++ chainName ++ "' chain in '"
                                          ++ tableName ++ "' table"
                         editFormHtml (tableName, chainName, 0, userChainNames) addFormParams $ Just formMes
-                        ) ++ printRuleCanonical rule
+                        ) ++ printRuleForRun rule
                     "Submit" -> do
                         tryChange (appendRule tableName chainName rule)
                         redir $ "/show?table=" ++ tableName
