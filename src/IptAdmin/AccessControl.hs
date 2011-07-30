@@ -30,17 +30,17 @@ authorize sessionsIORef config requestHandler = do
     if isAuthorised
         then
             -- Run IptAdmin monad with state
-            mapServerPartT (addStateToTheStack (fromJust clientIdMay, sessionsIORef, config)) requestHandler
+            mapServerPartT (addStateToStack (fromJust clientIdMay, sessionsIORef, config)) requestHandler
         else
             msum [ dir "login" $ LoginPage.pageHandlers (IptAdmin.AccessControl.authenticate $ cPamName config)
                                                         sessionsIORef
                  , redir "/login"
                  ]
     where
-        addStateToTheStack :: (Monad m) => MainState
+        addStateToStack :: (Monad m) => MainState
                            -> UnWebT (ErrorT String (StateT MainState m)) a
                            -> UnWebT (ErrorT String m) a
-        addStateToTheStack mainState statefulAction =
+        addStateToStack mainState statefulAction =
             mapErrorT (addStateToStack' mainState) statefulAction
 
         addStateToStack' :: (Monad m) => MainState
