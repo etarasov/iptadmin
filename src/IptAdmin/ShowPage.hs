@@ -28,31 +28,49 @@ pageHandlerGet = do
 
     iptables <- getIptables
 
+    countType <- do
+        setCountType <- getInputOrEmptyString "countersType"
+        case setCountType of
+            "bytes" -> do
+                let countTypeCookie = mkCookie "countersType" "Bytes"
+                addCookie (60 * 60 * 24 * 365 * 10) countTypeCookie
+                return CTBytes
+            "packets" -> do
+                let countTypeCookie = mkCookie "countersType" "Packets"
+                addCookie (60 * 60 * 24 * 365 * 10) countTypeCookie
+                return CTPackets
+            _ -> do
+                countTypeMay <- getDataFn $ lookCookieValue "countersType"
+                case countTypeMay of
+                    Nothing -> return CTPackets
+                    Just "Bytes" -> return CTBytes
+                    _ -> return CTPackets
+
     case table of
-        "" -> showFilter iptables
-        "filter" -> showFilter iptables
-        "nat" -> showNat iptables
-        "mangle" -> showMangle iptables
+        "" -> showFilter countType iptables
+        "filter" -> showFilter countType iptables
+        "nat" -> showNat countType iptables
+        "mangle" -> showMangle countType iptables
         "raw" -> throwError "We're sorry, the Raw table is not supported yet"
         a -> throwError $ "Invalid table parameter: " ++ a
 
-showFilter :: Iptables -> IptAdmin Response
-showFilter iptables = do
-    let filter' = renderTable ("filter", "Filter") $ sortFilterTable $ tFilter iptables
+showFilter :: CountersType -> Iptables -> IptAdmin Response
+showFilter countType iptables = do
+    let filter' = renderTable ("filter", "Filter") countType $ sortFilterTable $ tFilter iptables
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
         header "filter" "Iptables Filter table"
         showPageHtml filter'
 
-showNat :: Iptables -> IptAdmin Response
-showNat iptables = do
-    let nat = renderTable ("nat", "Nat") $ sortNatTable $ tNat iptables
+showNat :: CountersType -> Iptables -> IptAdmin Response
+showNat countType iptables = do
+    let nat = renderTable ("nat", "Nat") countType $ sortNatTable $ tNat iptables
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
         header "nat" "Iptables Nat table"
         showPageHtml nat
 
-showMangle :: Iptables -> IptAdmin Response
-showMangle iptables = do
-    let mangle = renderTable ("mangle", "Mangle") $ sortMangleTable $ tMangle iptables
+showMangle :: CountersType -> Iptables -> IptAdmin Response
+showMangle countType iptables = do
+    let mangle = renderTable ("mangle", "Mangle") countType $ sortMangleTable $ tMangle iptables
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
         header "mangle" "Iptables Mangle table. Unfortunately rule editing is not supported for Mangle yet."
         showPageHtml mangle

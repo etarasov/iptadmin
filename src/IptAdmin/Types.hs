@@ -28,3 +28,7 @@ data IptAdminConfig = IptAdminConfig { cSaveCommand :: String
                                      , cPort :: Int
                                      , cPamName :: String
                                      }
+
+-- | Display bytes or packets on show page
+data CountersType = CTBytes
+                  | CTPackets

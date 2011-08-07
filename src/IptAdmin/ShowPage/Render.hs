@@ -5,6 +5,7 @@ module IptAdmin.ShowPage.Render where
 import Data.Monoid
 import Data.String
 import IptAdmin.Render
+import IptAdmin.Types
 import Iptables.Print
 import Iptables.Types
 import Text.Blaze
@@ -18,23 +19,17 @@ isModule _ = False
 isOption :: RuleOption -> Bool
 isOption = not. isModule
 
-renderIptables :: Iptables -> Html
-renderIptables (Iptables f n m r) =
-    renderTable ("filter", "Filter") f
-    >> renderTable ("nat", "Nat") n
-    >> renderTable ("mangle", "Mangle") m
-    >> renderTable ("raw", "Raw") r
-
 renderTable :: (String, String)       -- ^ (table name, table name for rendering)
+            -> CountersType
             -> [Chain]                -- ^ table's chains
             -> Html
-renderTable (tableName, _) chains = do
-    mapM_ (renderChain tableName) chains
+renderTable (tableName, _) countType chains = do
+    mapM_ (renderChain tableName countType) chains
     H.a ! A.href (fromString $ "/addchain?table="++tableName) $ "Add chain"
 
 -- | Table name -> Chain -> Html
-renderChain :: String -> Chain -> Html
-renderChain tableName (Chain n p _ rs) =
+renderChain :: String -> CountersType -> Chain -> Html
+renderChain tableName countType (Chain n p _ rs) =
     H.table ! A.class_ "rules" $ do
         H.tr $ do
             H.td ! A.colspan "4" $
@@ -62,14 +57,14 @@ renderChain tableName (Chain n p _ rs) =
             H.th ! A.class_ "col4" $ "Target"
             H.th ! A.class_ "col5" $ "Target params"
             H.th ! A.class_ "col6" $ ""
-        mapM_ (renderRule (tableName, n)) $ zip rs [1..]
+        mapM_ (renderRule (tableName, n) countType) $ zip rs [1..]
         H.tr $
             H.td ! A.colspan "6" $
                 H.a ! A.href (fromString $ "/add?table="++tableName++"&chain="++n) $ "Add rule"
 
 -- | (Table name, Chain name) -> Rule -> Html
-renderRule :: (String, String) -> (Rule, Int) -> Html
-renderRule (tableName, chainName) (Rule counters opts tar , ruleNum) =
+renderRule :: (String, String) -> CountersType -> (Rule, Int) -> Html
+renderRule (tableName, chainName) countType (Rule counters opts tar , ruleNum) =
     let mainTr = if even ruleNum then H.tr ! A.class_ "even"
                                  else H.tr
         mods' = filter isModule opts
@@ -93,9 +88,12 @@ renderRule (tableName, chainName) (Rule counters opts tar , ruleNum) =
             ODestPort _ _ -> True
             OModule _ -> True
             _ -> False
+        counters' = case countType of
+            CTBytes -> H.a ! A.href (fromString $ "/show?table="++tableName++"&countersType=packets") $ fromString $ show $ cBytes counters
+            CTPackets -> H.a ! A.href (fromString $ "/show?table="++tableName++"&countersType=bytes") $ fromString $ show $ cPackets counters
     in
     mainTr $ do
-        H.td (fromString $ show counters)
+        H.td counters'
         H.td (fromString $ show ruleNum)
         H.td $ fromString mods''
         H.td $ fromString opts''
