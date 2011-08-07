@@ -30,7 +30,7 @@ renderTable (tableName, _) countType chains = do
 
 -- | Table name -> Chain -> Html
 renderChain :: String -> CountersType -> Chain -> Html
-renderChain tableName countType (Chain n p _ rs) =
+renderChain tableName countType (Chain n p counters rs) =
     H.table ! A.class_ "rules" $ do
         H.tr $ do
             H.td ! A.colspan "4" $
@@ -51,6 +51,16 @@ renderChain tableName countType (Chain n p _ rs) =
                         "Policy: "
                         H.a ! A.href (fromString $ "/editpolicy?table="++tableName++"&chain="++n) $
                             fromString $ show a
+                        " "
+                        case countType of
+                            CTBytes -> do
+                                "Bytes: "
+                                H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=packets" ++ bookmarkForJump n Nothing)
+                                           $ fromString $ show $ cBytes counters
+                            CTPackets -> do
+                                "Packets: "
+                                H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmarkForJump n Nothing)
+                                             $ fromString $ show $ cPackets counters
         H.tr $ do
             H.th ! A.class_ "col0" $ ""
             H.th ! A.class_ "col1" $ "#"
