@@ -33,7 +33,8 @@ renderChain tableName countType (Chain n p _ rs) =
     H.table ! A.class_ "rules" $ do
         H.tr $ do
             H.td ! A.colspan "4" $
-                H.div ! A.id "chainName" $ fromString n
+                H.div ! A.id "chainName" $
+                    H.a ! A.name (fromString $ "chain" ++ "_" ++ n) $ fromString n
             H.td ! A.class_ "rightAlign" ! A.colspan "3" $
                 case p of
                     PUNDEFINED -> do
@@ -89,12 +90,22 @@ renderRule (tableName, chainName) countType (Rule counters opts tar , ruleNum) =
             OModule _ -> True
             _ -> False
         counters' = case countType of
-            CTBytes -> H.a ! A.href (fromString $ "/show?table="++tableName++"&countersType=packets") $ fromString $ show $ cBytes counters
-            CTPackets -> H.a ! A.href (fromString $ "/show?table="++tableName++"&countersType=bytes") $ fromString $ show $ cPackets counters
+            CTBytes -> H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=packets" ++ bookmark)
+                           $ fromString $ show $ cBytes counters
+            CTPackets -> H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmark)
+                             $ fromString $ show $ cPackets counters
+            where
+                bookmark = if ruleNum > 20
+                    then
+                        "#" ++ chainName ++ "_" ++ show (ruleNum - 15)
+                    else
+                        "#chain_" ++ chainName
     in
     mainTr $ do
         H.td counters'
-        H.td (fromString $ show ruleNum)
+        H.td $
+            H.a ! A.name (fromString $ chainName ++ "_" ++ show ruleNum)
+                $ fromString $ show ruleNum
         H.td $ fromString mods''
         H.td $ fromString opts''
         H.td target'
