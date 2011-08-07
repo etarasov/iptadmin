@@ -44,7 +44,7 @@ pageHandlerPost = do
     _ <- checkParams tableName chainName rulePosition
 
     tryChange (deleteRule tableName chainName rulePosition)
-    redir $ "/show?table=" ++ tableName
+    redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName (Just rulePosition)
 
 checkParams :: String -> String -> Int -> IptAdmin (Chain, Rule)
 checkParams tableName chainName rulePosition = do

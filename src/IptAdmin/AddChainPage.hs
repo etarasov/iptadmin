@@ -57,5 +57,5 @@ pageHandlerPost = do
                             editChainForm (tableName, "") newChainName' $ Just "The name is valid"
                         "Submit" -> do
                             tryChange $ addChain tableName newChainName'
-                            redir $ "/show?table=" ++ tableName
+                            redir $ "/show?table=" ++ tableName ++ bookmarkForJump newChainName' Nothing
                         a -> throwError $ "Invalid value for 'submit' parameter: " ++ a

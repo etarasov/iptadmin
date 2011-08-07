@@ -73,7 +73,7 @@ pageHandlerPost = do
                     ) ++ printRuleForRun rule
                 "Submit" -> do
                     tryChange (replaceRule tableName chainName rulePosition rule)
-                    redir $ "/show?table=" ++ tableName
+                    redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName (Just rulePosition)
                 a -> throwError $ "Invalid value for 'submit' parameter: " ++ a
 
 checkParams :: String -> String -> Int -> IptAdmin ([Chain], Chain, Rule)

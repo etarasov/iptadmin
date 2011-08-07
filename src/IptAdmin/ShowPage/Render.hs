@@ -6,6 +6,7 @@ import Data.Monoid
 import Data.String
 import IptAdmin.Render
 import IptAdmin.Types
+import IptAdmin.Utils
 import Iptables.Print
 import Iptables.Types
 import Text.Blaze
@@ -90,16 +91,10 @@ renderRule (tableName, chainName) countType (Rule counters opts tar , ruleNum) =
             OModule _ -> True
             _ -> False
         counters' = case countType of
-            CTBytes -> H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=packets" ++ bookmark)
+            CTBytes -> H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=packets" ++ bookmarkForJump chainName (Just ruleNum))
                            $ fromString $ show $ cBytes counters
-            CTPackets -> H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmark)
+            CTPackets -> H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmarkForJump chainName (Just ruleNum))
                              $ fromString $ show $ cPackets counters
-            where
-                bookmark = if ruleNum > 20
-                    then
-                        "#" ++ chainName ++ "_" ++ show (ruleNum - 15)
-                    else
-                        "#chain_" ++ chainName
     in
     mainTr $ do
         H.td counters'

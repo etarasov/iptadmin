@@ -102,3 +102,17 @@ waitAndRollBack mainState sessionId = do
         Nothing -> return ()
         Just iptablesStr ->
             iptablesRestore iptablesStr
+
+bookmarkForJump :: String         -- ^ Chain name
+                -> Maybe Int      -- ^ Rule number
+                -> String         -- ^ Bookmark with "#"
+bookmarkForJump chainName ruleNumMay =
+    case ruleNumMay of
+        Nothing ->
+            "#chain_" ++ chainName
+        Just ruleNum ->
+            if ruleNum > 20
+                then
+                    "#" ++ chainName ++ "_" ++ show (ruleNum - 15)
+                else
+                    "#chain_" ++ chainName
