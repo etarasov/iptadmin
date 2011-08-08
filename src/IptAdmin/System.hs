@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 
 module IptAdmin.System where
 
@@ -14,7 +15,7 @@ import System.Process
 
 -- TODO: change waitForProcess to nonblocking version with timeout
 
-getIptablesSave :: IptAdmin String
+getIptablesSave :: (MonadError String m, MonadIO m) => m String
 getIptablesSave = do
     (_, o, _, h) <- liftIO $ runInteractiveCommand "iptables-save -c"
     ec <- liftIO $ waitForProcess h
@@ -29,13 +30,13 @@ iptablesRestore iptablesStr = do
     _ <- waitForProcess h
     return ()
 
-getIptables :: IptAdmin Iptables
+getIptables :: (MonadError String m, MonadIO m) => m Iptables
 getIptables = do
     iprules <- getIptablesSave
     let rE = parseIptables iprules
     either (throwError . show) return rE
 
-getTable :: String -> IptAdmin [Chain]
+getTable :: (MonadError String m, MonadIO m) => String -> m [Chain]
 getTable tableName = do
     iptables <- getIptables
     case tableName of
