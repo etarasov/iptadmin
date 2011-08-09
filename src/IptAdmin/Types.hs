@@ -7,6 +7,7 @@ import Data.IORef
 import Data.Map
 import Data.Time
 import Happstack.Server.SimpleHTTP
+import Iptables.Types
 
 -- | Authorization monad
 type IptAdminAuth = ServerPartT (ErrorT String IO)
@@ -20,6 +21,7 @@ type Sessions = Map SessionId Session
 
 data Session = Session { lastVisit :: UTCTime
                        , backup :: Maybe String
+                       , sIptables :: Iptables
                        }
 
 type MainState = (SessionId, IORef Sessions, IptAdminConfig)

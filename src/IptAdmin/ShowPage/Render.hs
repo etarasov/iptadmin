@@ -18,19 +18,20 @@ isModule (OModule _) = True
 isModule _ = False
 
 isOption :: RuleOption -> Bool
-isOption = not. isModule
+isOption = not . isModule
 
 renderTable :: (String, String)       -- ^ (table name, table name for rendering)
             -> CountersType
             -> [Chain]                -- ^ table's chains
+            -> [Chain]                -- ^ chains with relative start counters state
             -> Html
-renderTable (tableName, _) countType chains = do
-    mapM_ (renderChain tableName countType) chains
+renderTable (tableName, _) countType chains chains' = do
+    mapM_ (renderChain tableName countType) $ zip chains chains'
     H.a ! A.href (fromString $ "/addchain?table="++tableName) $ "Add chain"
 
 -- | Table name -> Chain -> Html
-renderChain :: String -> CountersType -> Chain -> Html
-renderChain tableName countType (Chain n p counters rs) =
+renderChain :: String -> CountersType -> (Chain,Chain) -> Html
+renderChain tableName countType (Chain n p counters rs, Chain _ _ counters' rs') =
     H.table ! A.class_ "rules" $ do
         H.tr $ do
             H.td ! A.colspan "4" $
@@ -60,7 +61,7 @@ renderChain tableName countType (Chain n p counters rs) =
                             CTPackets -> do
                                 "Packets: "
                                 H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmarkForJump n Nothing)
-                                             $ fromString $ show $ cPackets counters
+                                             $ fromString $ show $ (cPackets counters - cPackets counters')
         H.tr $ do
             H.th ! A.class_ "col0" $ ""
             H.th ! A.class_ "col1" $ "#"
@@ -69,14 +70,14 @@ renderChain tableName countType (Chain n p counters rs) =
             H.th ! A.class_ "col4" $ "Target"
             H.th ! A.class_ "col5" $ "Target params"
             H.th ! A.class_ "col6" $ ""
-        mapM_ (renderRule (tableName, n) countType) $ zip rs [1..]
+        mapM_ (renderRule (tableName, n) countType) $ zip [1..] $ zip rs rs'
         H.tr $
             H.td ! A.colspan "6" $
                 H.a ! A.href (fromString $ "/add?table="++tableName++"&chain="++n) $ "Add rule"
 
 -- | (Table name, Chain name) -> Rule -> Html
-renderRule :: (String, String) -> CountersType -> (Rule, Int) -> Html
-renderRule (tableName, chainName) countType (Rule counters opts tar , ruleNum) =
+renderRule :: (String, String) -> CountersType -> (Int, (Rule, Rule)) -> Html
+renderRule (tableName, chainName) countType (ruleNum, (Rule counters opts tar, Rule counters2 _ _)) =
     let mainTr = if even ruleNum then H.tr ! A.class_ "even"
                                  else H.tr
         mods' = filter isModule opts
@@ -104,7 +105,7 @@ renderRule (tableName, chainName) countType (Rule counters opts tar , ruleNum) =
             CTBytes -> H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=packets" ++ bookmarkForJump chainName (Just ruleNum))
                            $ fromString $ show $ cBytes counters
             CTPackets -> H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmarkForJump chainName (Just ruleNum))
-                             $ fromString $ show $ cPackets counters
+                             $ fromString $ show $ cPackets counters - cPackets counters2
     in
     mainTr $ do
         H.td counters'

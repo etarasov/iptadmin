@@ -11,6 +11,7 @@ import Data.Time
 import Happstack.Server.SimpleHTTP
 import Template
 import IptAdmin.Render
+import IptAdmin.System
 import IptAdmin.Types
 import IptAdmin.Utils
 import System.Random
@@ -55,8 +56,15 @@ pageHandlerPost authenticate sessionsIORef = do
             addCookie (60 * 60 * 24 * 365 * 10) sessionIdCookie
             -- 3. Обновляем состояние
             curTime <- liftIO getCurrentTime
+            iptables <- getIptables
             _ <- liftIO $ atomicModifyIORef sessionsIORef
-                                            (\ m -> (insert sessionId (Session curTime Nothing) m, ()))
+                                            (\ m -> ( insert sessionId (Session curTime
+                                                                               Nothing
+                                                                               iptables
+                                                                       ) m
+                                                    , ()
+                                                    )
+                                            )
             -- 4. Редиректим на /show
             redir "/show"
 

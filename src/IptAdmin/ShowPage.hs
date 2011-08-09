@@ -3,6 +3,9 @@
 module IptAdmin.ShowPage where
 
 import Control.Monad.Error
+import Control.Monad.State
+import Data.IORef
+import Data.Map
 import Happstack.Server.SimpleHTTP
 import Template
 import IptAdmin.Render
@@ -46,31 +49,53 @@ pageHandlerGet = do
                     Just "Bytes" -> return CTBytes
                     _ -> return CTPackets
 
+    (sessionId, sessionsIO, _) <- lift get
+    sessions <- liftIO $ readIORef sessionsIO
+    let session = sessions Data.Map.! sessionId
+
+    iptables' <- if sIptables session /= iptables
+        then
+            liftIO $ atomicModifyIORef sessionsIO $
+                \ sessions' ->
+                    ( insert sessionId (session {sIptables = iptables}) sessions'
+                    , iptables)
+        else
+            return $ sIptables session
+
     case table of
-        "" -> showFilter countType iptables
-        "filter" -> showFilter countType iptables
-        "nat" -> showNat countType iptables
-        "mangle" -> showMangle countType iptables
+        "" -> showFilter countType iptables iptables'
+        "filter" -> showFilter countType iptables iptables'
+        "nat" -> showNat countType iptables iptables'
+        "mangle" -> showMangle countType iptables iptables'
         "raw" -> throwError "We're sorry, the Raw table is not supported yet"
         a -> throwError $ "Invalid table parameter: " ++ a
 
-showFilter :: CountersType -> Iptables -> IptAdmin Response
-showFilter countType iptables = do
-    let filter' = renderTable ("filter", "Filter") countType $ sortFilterTable $ tFilter iptables
+showFilter :: CountersType -> Iptables -> Iptables -> IptAdmin Response
+showFilter countType iptables iptables' = do
+    let filter' = renderTable ("filter", "Filter")
+                              countType
+                              (sortFilterTable $ tFilter iptables)
+                              (sortFilterTable $ tFilter iptables')
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
         header "filter" "Iptables Filter table"
         showPageHtml filter'
 
-showNat :: CountersType -> Iptables -> IptAdmin Response
-showNat countType iptables = do
-    let nat = renderTable ("nat", "Nat") countType $ sortNatTable $ tNat iptables
+showNat :: CountersType -> Iptables -> Iptables -> IptAdmin Response
+showNat countType iptables iptables' = do
+    let nat = renderTable ("nat", "Nat")
+                          countType
+                          (sortNatTable $ tNat iptables)
+                          (sortNatTable $ tNat iptables')
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
         header "nat" "Iptables Nat table"
         showPageHtml nat
 
-showMangle :: CountersType -> Iptables -> IptAdmin Response
-showMangle countType iptables = do
-    let mangle = renderTable ("mangle", "Mangle") countType $ sortMangleTable $ tMangle iptables
+showMangle :: CountersType -> Iptables -> Iptables -> IptAdmin Response
+showMangle countType iptables iptables' = do
+    let mangle = renderTable ("mangle", "Mangle")
+                             countType
+                             (sortMangleTable $ tMangle iptables)
+                             (sortMangleTable $ tMangle iptables')
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
         header "mangle" "Iptables Mangle table. Unfortunately rule editing is not supported for Mangle yet."
         showPageHtml mangle
@@ -80,5 +105,5 @@ pageHandlerPost = undefined
 
 showPageHtml :: Html -> Html
 showPageHtml table =
-    H.div ! A.id "rules" $
+    H.div H.! A.id "rules" $
         table
