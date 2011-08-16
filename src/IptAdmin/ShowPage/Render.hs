@@ -2,6 +2,7 @@
 
 module IptAdmin.ShowPage.Render where
 
+import Control.Monad
 import Data.Monoid
 import Data.String
 import IptAdmin.Render
@@ -63,7 +64,26 @@ renderChain tableName countType (Chain n p counters rs, Chain _ _ counters' rs')
                                 H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmarkForJump n Nothing)
                                              $ fromString $ show $ (cPackets counters - cPackets counters')
         H.tr $ do
-            H.th ! A.class_ "col0" $ ""
+            H.th ! A.class_ "col0" $
+                case countType of
+                    CTPackets -> do
+                        H.span ! A.title "Packets" $ "P"
+                        H.form ! A.id "resetForm" ! A.method "post" $ do
+                            H.input ! A.type_ "hidden"
+                                    ! A.name "table"
+                                    ! A.value (fromString tableName)
+                            H.input ! A.type_ "hidden"
+                                    ! A.name "chain"
+                                    ! A.value (fromString n)
+                            H.input ! A.type_ "hidden"
+                                    ! A.name "action"
+                                    ! A.value "reset"
+                            H.input ! A.title "Reset packets counters"
+                                    ! A.id "submit"
+                                    ! A.name "reset"
+                                    ! A.type_ "submit"
+                                    ! A.value "r"
+                    CTBytes -> H.span ! A.title "Bytes" $ "B"
             H.th ! A.class_ "col1" $ "#"
             H.th ! A.class_ "col2" $ "Modules"
             H.th ! A.class_ "col3" $ "Options"

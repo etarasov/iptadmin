@@ -97,13 +97,29 @@ showMangle countType iptables iptables' = do
                              (sortMangleTable $ tMangle iptables)
                              (sortMangleTable $ tMangle iptables')
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-        header "mangle" "Iptables Mangle table. Unfortunately rule editing is not supported for Mangle yet."
+        header "mangle" "Iptables Mangle table. Rule editing is not supported for Mangle yet."
         showPageHtml mangle
-
-pageHandlerPost :: IptAdmin Response
-pageHandlerPost = undefined
 
 showPageHtml :: Html -> Html
 showPageHtml table =
     H.div H.! A.id "rules" $
         table
+
+pageHandlerPost :: IptAdmin Response
+pageHandlerPost = do
+    actionS <- getInputOrEmptyString "action"
+    case actionS of
+        "reset" -> do
+            tableName <- getInputOrEmptyString "table"
+            chainName <- getInputString "chain"
+            iptables <- getIptables
+            (sessionId, sessionsIO, _) <- lift get
+            sessions <- liftIO $ readIORef sessionsIO
+            let session = sessions Data.Map.! sessionId
+            liftIO $ atomicModifyIORef sessionsIO $
+                \ sessions' ->
+                    ( insert sessionId (session {sIptables = iptables}) sessions'
+                    , ())
+            redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName Nothing
+        "" -> throwError "'action' parameter is not specified"
+        a -> throwError $ "unknown value of 'action' parameter: " ++ a
