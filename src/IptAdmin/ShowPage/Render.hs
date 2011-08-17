@@ -2,7 +2,6 @@
 
 module IptAdmin.ShowPage.Render where
 
-import Control.Monad
 import Data.Monoid
 import Data.String
 import IptAdmin.Render
@@ -67,7 +66,9 @@ renderChain tableName countType (Chain n p counters rs, Chain _ _ counters' rs')
             H.th ! A.class_ "col0" $
                 case countType of
                     CTPackets -> do
-                        H.span ! A.title "Packets" $ "P"
+                        H.span ! A.title "Packets" $
+                            H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmarkForJump n Nothing)
+                                $ "P"
                         H.form ! A.id "resetForm" ! A.method "post" $ do
                             H.input ! A.type_ "hidden"
                                     ! A.name "table"
@@ -83,7 +84,9 @@ renderChain tableName countType (Chain n p counters rs, Chain _ _ counters' rs')
                                     ! A.name "reset"
                                     ! A.type_ "submit"
                                     ! A.value "r"
-                    CTBytes -> H.span ! A.title "Bytes" $ "B"
+                    CTBytes -> H.span ! A.title "Bytes" $
+                        H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=packets" ++ bookmarkForJump n Nothing)
+                            $ "B"
             H.th ! A.class_ "col1" $ "#"
             H.th ! A.class_ "col2" $ "Modules"
             H.th ! A.class_ "col3" $ "Options"
@@ -122,10 +125,8 @@ renderRule (tableName, chainName) countType (ruleNum, (Rule counters opts tar, R
             OModule _ -> True
             _ -> False
         counters' = case countType of
-            CTBytes -> H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=packets" ++ bookmarkForJump chainName (Just ruleNum))
-                           $ fromString $ show $ cBytes counters
-            CTPackets -> H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmarkForJump chainName (Just ruleNum))
-                             $ fromString $ show $ cPackets counters - cPackets counters2
+            CTBytes -> fromString $ show $ cBytes counters
+            CTPackets -> fromString $ show $ cPackets counters - cPackets counters2
     in
     mainTr $ do
         H.td counters'
