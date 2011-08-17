@@ -55,13 +55,13 @@ renderChain tableName countType (Chain n p counters rs, Chain _ _ counters' rs')
                         " "
                         case countType of
                             CTBytes -> do
-                                "Bytes: "
                                 H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=packets" ++ bookmarkForJump n Nothing)
-                                           $ fromString $ show $ cBytes counters
+                                    $ "Bytes: "
+                                fromString $ show $ cBytes counters
                             CTPackets -> do
-                                "Packets: "
                                 H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmarkForJump n Nothing)
-                                             $ fromString $ show $ (cPackets counters - cPackets counters')
+                                    $ "Packets: "
+                                fromString $ show $ (cPackets counters - cPackets counters')
         H.tr $ do
             H.th ! A.class_ "col0" $
                 case countType of
