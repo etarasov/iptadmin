@@ -40,7 +40,8 @@ renderChain tableName countType refreshString (Chain n p counters rs, Chain _ _ 
                     H.a ! A.name (fromString $ "chain" ++ "_" ++ n) $ fromString n
                     " "
                     H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&refresh=" ++ refreshString ++ bookmarkForJump n Nothing)
-                        $ "R"
+                        ! A.title "Refresh page"
+                        $ "↻"
             H.td ! A.class_ "rightAlign" ! A.colspan "3" $
                 case p of
                     PUNDEFINED -> do
