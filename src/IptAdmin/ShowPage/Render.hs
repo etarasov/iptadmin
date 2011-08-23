@@ -21,22 +21,26 @@ isOption :: RuleOption -> Bool
 isOption = not . isModule
 
 renderTable :: (String, String)       -- ^ (table name, table name for rendering)
-            -> CountersType
+            -> CountersType           -- ^ display bytes or packets counters
+            -> String                 -- ^ random string for 'refresh' link
             -> [Chain]                -- ^ table's chains
             -> [Chain]                -- ^ chains with relative start counters state
             -> Html
-renderTable (tableName, _) countType chains chains' = do
-    mapM_ (renderChain tableName countType) $ zip chains chains'
+renderTable (tableName, _) countType refreshString chains chains' = do
+    mapM_ (renderChain tableName countType refreshString) $ zip chains chains'
     H.a ! A.href (fromString $ "/addchain?table="++tableName) $ "Add chain"
 
--- | Table name -> Chain -> Html
-renderChain :: String -> CountersType -> (Chain,Chain) -> Html
-renderChain tableName countType (Chain n p counters rs, Chain _ _ counters' rs') =
+-- | Table name -> counters type -> refresh string ->  Chain -> Html
+renderChain :: String -> CountersType -> String -> (Chain,Chain) -> Html
+renderChain tableName countType refreshString (Chain n p counters rs, Chain _ _ counters' rs') =
     H.table ! A.class_ "rules" $ do
         H.tr $ do
             H.td ! A.colspan "4" $
-                H.div ! A.id "chainName" $
+                H.div ! A.id "chainName" $ do
                     H.a ! A.name (fromString $ "chain" ++ "_" ++ n) $ fromString n
+                    " "
+                    H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&refresh=" ++ refreshString ++ bookmarkForJump n Nothing)
+                        $ "R"
             H.td ! A.class_ "rightAlign" ! A.colspan "3" $
                 case p of
                     PUNDEFINED -> do

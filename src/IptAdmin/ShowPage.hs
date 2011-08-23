@@ -15,6 +15,7 @@ import IptAdmin.Types
 import IptAdmin.Utils
 import Iptables
 import Iptables.Types
+import System.Random
 import Text.Blaze
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
@@ -72,8 +73,10 @@ pageHandlerGet = do
 
 showFilter :: CountersType -> Iptables -> Iptables -> IptAdmin Response
 showFilter countType iptables iptables' = do
+    refreshString <- liftIO $ show `fmap` (randomRIO (1,100000) :: IO Int)
     let filter' = renderTable ("filter", "Filter")
                               countType
+                              refreshString
                               (sortFilterTable $ tFilter iptables)
                               (sortFilterTable $ tFilter iptables')
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
@@ -82,8 +85,10 @@ showFilter countType iptables iptables' = do
 
 showNat :: CountersType -> Iptables -> Iptables -> IptAdmin Response
 showNat countType iptables iptables' = do
+    refreshString <- liftIO $ show `fmap` (randomRIO (1,100000) :: IO Int)
     let nat = renderTable ("nat", "Nat")
                           countType
+                          refreshString
                           (sortNatTable $ tNat iptables)
                           (sortNatTable $ tNat iptables')
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
@@ -92,8 +97,10 @@ showNat countType iptables iptables' = do
 
 showMangle :: CountersType -> Iptables -> Iptables -> IptAdmin Response
 showMangle countType iptables iptables' = do
+    refreshString <- liftIO $ show `fmap` (randomRIO (1,100000) :: IO Int)
     let mangle = renderTable ("mangle", "Mangle")
                              countType
+                             refreshString
                              (sortMangleTable $ tMangle iptables)
                              (sortMangleTable $ tMangle iptables')
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
