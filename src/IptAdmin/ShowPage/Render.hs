@@ -22,17 +22,18 @@ isOption = not . isModule
 
 renderTable :: (String, String)       -- ^ (table name, table name for rendering)
             -> CountersType           -- ^ display bytes or packets counters
+            -> Integer                -- ^ Max counter diff
             -> String                 -- ^ random string for 'refresh' link
             -> [Chain]                -- ^ table's chains
             -> [Chain]                -- ^ chains with relative start counters state
             -> Html
-renderTable (tableName, _) countType refreshString chains chains' = do
-    mapM_ (renderChain tableName countType refreshString) $ zip chains chains'
+renderTable (tableName, _) countType maxCounter refreshString chains chains' = do
+    mapM_ (renderChain tableName countType maxCounter refreshString) $ zip chains chains'
     H.a ! A.href (fromString $ "/addchain?table="++tableName) $ "Add chain"
 
--- | Table name -> counters type -> refresh string ->  Chain -> Html
-renderChain :: String -> CountersType -> String -> (Chain,Chain) -> Html
-renderChain tableName countType refreshString (Chain n p counters rs, Chain _ _ counters' rs') =
+-- | Table name -> counters type -> max counter -> refresh string ->  Chain -> Html
+renderChain :: String -> CountersType -> Integer -> String -> (Chain,Chain) -> Html
+renderChain tableName countType maxCounterDiff refreshString (Chain n p counters rs, Chain _ _ counters' rs') =
     H.table ! A.class_ "rules" $ do
         H.tr $ do
             H.td ! A.colspan "4" $
@@ -66,7 +67,8 @@ renderChain tableName countType refreshString (Chain n p counters rs, Chain _ _ 
                             CTPackets -> do
                                 H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmarkForJump n Nothing)
                                     $ "Packets: "
-                                fromString $ show $ (cPackets counters - cPackets counters')
+                                H.span ! A.style "color:#000000;background-color:rgb(1,100,200)" $
+                                    fromString $ show $ (cPackets counters - cPackets counters')
         H.tr $ do
             H.th ! A.class_ "col0" $
                 case countType of

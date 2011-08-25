@@ -71,11 +71,23 @@ pageHandlerGet = do
         "raw" -> throwError "We're sorry, the Raw table is not supported yet"
         a -> throwError $ "Invalid table parameter: " ++ a
 
+maxPacketCounterDiff :: [(Chain, Chain)] -> Integer
+maxPacketCounterDiff [] = 0
+maxPacketCounterDiff ((x,x'):xs) = max (maxPacketCounterDiff' (x,x')) (maxPacketCounterDiff xs)
+    where
+        maxPacketCounterDiff' :: (Chain, Chain) -> Integer
+        maxPacketCounterDiff' (Chain _ _ (Counters p _) rs, Chain _ _ (Counters p' _) rs') = max (p - p') (maxPacketCounterDiff'' $ zip rs rs')
+
+        maxPacketCounterDiff'' :: [(Rule, Rule)] -> Integer
+        maxPacketCounterDiff'' [] = 0
+        maxPacketCounterDiff'' ((Rule (Counters p _) _ _, Rule (Counters p' _) _ _):rs) = max (p - p') (maxPacketCounterDiff'' rs)
+
 showFilter :: CountersType -> Iptables -> Iptables -> IptAdmin Response
 showFilter countType iptables iptables' = do
     refreshString <- liftIO $ show `fmap` (randomRIO (1,100000) :: IO Int)
     let filter' = renderTable ("filter", "Filter")
                               countType
+                              (maxPacketCounterDiff $ zip (sortFilterTable $ tFilter iptables) (sortFilterTable $ tFilter iptables'))
                               refreshString
                               (sortFilterTable $ tFilter iptables)
                               (sortFilterTable $ tFilter iptables')
@@ -88,6 +100,7 @@ showNat countType iptables iptables' = do
     refreshString <- liftIO $ show `fmap` (randomRIO (1,100000) :: IO Int)
     let nat = renderTable ("nat", "Nat")
                           countType
+                          (maxPacketCounterDiff $ zip (sortNatTable $ tFilter iptables) (sortNatTable $ tFilter iptables'))
                           refreshString
                           (sortNatTable $ tNat iptables)
                           (sortNatTable $ tNat iptables')
@@ -100,6 +113,7 @@ showMangle countType iptables iptables' = do
     refreshString <- liftIO $ show `fmap` (randomRIO (1,100000) :: IO Int)
     let mangle = renderTable ("mangle", "Mangle")
                              countType
+                             (maxPacketCounterDiff $ zip (sortMangleTable $ tFilter iptables) (sortMangleTable $ tFilter iptables'))
                              refreshString
                              (sortMangleTable $ tMangle iptables)
                              (sortMangleTable $ tMangle iptables')
