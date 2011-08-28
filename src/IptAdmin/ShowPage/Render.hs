@@ -65,10 +65,19 @@ renderChain tableName countType maxCounterDiff refreshString (Chain n p counters
                                     $ "Bytes: "
                                 fromString $ show $ cBytes counters
                             CTPackets -> do
+                                let relativeCounter = cPackets counters - cPackets counters'
+                                let heatRate = (fromInteger relativeCounter) / (fromInteger maxCounterDiff)
+                                let red = "255"
+                                let green = case relativeCounter of
+                                        0 -> "255"
+                                        _ -> show $ round $ 219 - ((219 - 108) * heatRate)
+                                let blue = case relativeCounter of
+                                        0 -> "255"
+                                        _ -> show $ round $ 193 - (193 * heatRate)
                                 H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmarkForJump n Nothing)
                                     $ "Packets: "
-                                H.span ! A.style "color:#000000;background-color:rgb(1,100,200)" $
-                                    fromString $ show $ (cPackets counters - cPackets counters')
+                                H.span ! A.style (fromString $ "color:#000000;background-color:rgb("++red++","++green++","++blue++")") $
+                                    fromString $ show relativeCounter
         H.tr $ do
             H.th ! A.class_ "col0" $
                 case countType of
@@ -100,14 +109,14 @@ renderChain tableName countType maxCounterDiff refreshString (Chain n p counters
             H.th ! A.class_ "col4" $ "Target"
             H.th ! A.class_ "col5" $ "Target params"
             H.th ! A.class_ "col6" $ ""
-        mapM_ (renderRule (tableName, n) countType) $ zip [1..] $ zip rs rs'
+        mapM_ (renderRule (tableName, n) countType maxCounterDiff) $ zip [1..] $ zip rs rs'
         H.tr $
             H.td ! A.colspan "6" $
                 H.a ! A.href (fromString $ "/add?table="++tableName++"&chain="++n) $ "Add rule"
 
--- | (Table name, Chain name) -> Rule -> Html
-renderRule :: (String, String) -> CountersType -> (Int, (Rule, Rule)) -> Html
-renderRule (tableName, chainName) countType (ruleNum, (Rule counters opts tar, Rule counters2 _ _)) =
+-- | (Table name, Chain name) -> Counters type -> max counter -> Rule -> Html
+renderRule :: (String, String) -> CountersType -> Integer -> (Int, (Rule, Rule)) -> Html
+renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule counters opts tar, Rule counters2 _ _)) =
     let mainTr = if even ruleNum then H.tr ! A.class_ "even"
                                  else H.tr
         mods' = filter isModule opts
@@ -133,7 +142,18 @@ renderRule (tableName, chainName) countType (ruleNum, (Rule counters opts tar, R
             _ -> False
         counters' = case countType of
             CTBytes -> fromString $ show $ cBytes counters
-            CTPackets -> fromString $ show $ cPackets counters - cPackets counters2
+            CTPackets -> do
+                let relativeCounter = cPackets counters - cPackets counters2
+                let heatRate = (fromInteger relativeCounter) / (fromInteger maxCounterDiff)
+                let red = "255"
+                let green = case relativeCounter of
+                        0 -> "255"
+                        _ -> show $ round $ 219 - ((219 - 108) * heatRate)
+                let blue = case relativeCounter of
+                        0 -> "255"
+                        _ -> show $ round $ 193 - (193 * heatRate)
+                H.span ! A.style (fromString $ "color:#000000;background-color:rgb("++red++","++green++","++blue++")") $
+                    fromString $ show relativeCounter
     in
     mainTr $ do
         H.td counters'
