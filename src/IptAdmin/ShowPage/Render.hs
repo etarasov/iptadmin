@@ -97,6 +97,7 @@ renderChain tableName countType maxCounterDiff refreshString (Chain n p counters
                                     ! A.name "action"
                                     ! A.value "reset"
                             H.input ! A.title "Reset packets counters"
+                                    ! A.class_ "resetButton"
                                     ! A.id "submit"
                                     ! A.name "reset"
                                     ! A.type_ "submit"
