@@ -100,7 +100,7 @@ showNat countType iptables iptables' = do
     refreshString <- liftIO $ show `fmap` (randomRIO (1,100000) :: IO Int)
     let nat = renderTable ("nat", "Nat")
                           countType
-                          (maxPacketCounterDiff $ zip (sortNatTable $ tFilter iptables) (sortNatTable $ tFilter iptables'))
+                          (maxPacketCounterDiff $ zip (sortNatTable $ tNat iptables) (sortNatTable $ tNat iptables'))
                           refreshString
                           (sortNatTable $ tNat iptables)
                           (sortNatTable $ tNat iptables')
@@ -113,7 +113,7 @@ showMangle countType iptables iptables' = do
     refreshString <- liftIO $ show `fmap` (randomRIO (1,100000) :: IO Int)
     let mangle = renderTable ("mangle", "Mangle")
                              countType
-                             (maxPacketCounterDiff $ zip (sortMangleTable $ tFilter iptables) (sortMangleTable $ tFilter iptables'))
+                             (maxPacketCounterDiff $ zip (sortMangleTable $ tMangle iptables) (sortMangleTable $ tMangle iptables'))
                              refreshString
                              (sortMangleTable $ tMangle iptables)
                              (sortMangleTable $ tMangle iptables')

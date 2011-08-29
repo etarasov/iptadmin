@@ -2,6 +2,7 @@
 
 module IptAdmin.ShowPage.Render where
 
+import Control.Monad.Error
 import Data.Monoid
 import Data.String
 import IptAdmin.Render
@@ -82,7 +83,7 @@ renderChain tableName countType maxCounterDiff refreshString (Chain n p counters
             H.th ! A.class_ "col0" $
                 case countType of
                     CTPackets -> do
-                        H.span ! A.title "Packets" $
+                        H.span ! A.title "Packets indicator" $
                             H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=bytes" ++ bookmarkForJump n Nothing)
                                 $ "P"
                         H.form ! A.id "resetForm" ! A.method "post" $ do
@@ -152,8 +153,9 @@ renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule count
                 let blue = case relativeCounter of
                         0 -> "255"
                         _ -> show $ round $ 193 - (193 * heatRate)
-                H.span ! A.style (fromString $ "color:#000000;background-color:rgb("++red++","++green++","++blue++")") $
-                    fromString $ show relativeCounter
+                H.span ! A.style (fromString $ "color:#000000;background-color:rgb("++red++","++green++","++blue++")")
+                       ! A.title (fromString $ show relativeCounter ++ " packet(s)")
+                       $ preEscapedText "&nbsp;&nbsp;"
     in
     mainTr $ do
         H.td counters'
