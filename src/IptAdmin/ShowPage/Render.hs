@@ -100,7 +100,7 @@ renderChain tableName countType maxCounterDiff refreshString (Chain n p counters
                                     ! A.id "submit"
                                     ! A.name "reset"
                                     ! A.type_ "submit"
-                                    ! A.value "r"
+                                    ! A.value "⚡" -- "r"
                     CTBytes -> H.span ! A.title "Bytes" $
                         H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=packets" ++ bookmarkForJump n Nothing)
                             $ "B"
@@ -170,12 +170,12 @@ renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule count
             H.a ! A.class_ "button"
                 ! A.title "Delete Rule"
                 ! A.href (fromString $ "/del?table="++tableName++"&chain="++chainName++"&pos=" ++ show ruleNum)
-                $ "X"
+                $ "✘" -- "X"
             if ruleEditable then
                 H.a ! A.class_ "button"
                     ! A.title "Edit Rule"
                     ! A.href (fromString $ "/edit?table="++tableName++"&chain="++chainName++"&pos=" ++ show ruleNum)
-                    $ "e"
+                    $ "✎" -- "e"
                             else
                 mempty
             H.a ! A.class_ "button"
