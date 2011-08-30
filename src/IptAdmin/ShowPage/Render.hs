@@ -64,7 +64,9 @@ renderChain tableName countType maxCounterDiff refreshString (Chain n p counters
                             CTBytes -> do
                                 H.a ! A.href (fromString $ "/show?table=" ++ tableName ++ "&countersType=packets" ++ bookmarkForJump n Nothing)
                                     $ "Bytes: "
-                                fromString $ show $ cBytes counters
+                                H.span ! A.title (fromString $ show $ cBytes counters)
+                                       $ fromString $ bytesToPrefix $ cBytes counters
+
                             CTPackets -> do
                                 let relativeCounter = cPackets counters - cPackets counters'
                                 let heatRate = (fromInteger relativeCounter) / (fromInteger maxCounterDiff)
@@ -143,7 +145,9 @@ renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule count
             OModule _ -> True
             _ -> False
         counters' = case countType of
-            CTBytes -> fromString $ show $ cBytes counters
+            CTBytes ->
+                H.span ! A.title (fromString $ (show $ cBytes counters) ++ " bytes")
+                       $ fromString $ bytesToPrefix $ cBytes counters
             CTPackets -> do
                 let relativeCounter = cPackets counters - cPackets counters2
                 let heatRate = (fromInteger relativeCounter) / (fromInteger maxCounterDiff)
@@ -183,3 +187,17 @@ renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule count
                 ! A.title "Insert Rule"
                 ! A.href (fromString $ "/insert?table="++tableName++"&chain="++chainName++"&pos=" ++ show ruleNum)
                 $ "+"
+
+bytesToPrefix :: Integer -> String
+bytesToPrefix bytes = bytesToPrefix' ["","K","M","G","T","P","E","Z","Y"] bytes
+    where
+        bytesToPrefix' :: [String] -> Integer -> String
+        bytesToPrefix' [] _ = "more than yottabyte"
+        bytesToPrefix' (x:xs) b =
+            let nextLevel = b `div` 1024
+            in
+            if nextLevel == 0
+            then
+                show b ++ x
+            else
+                bytesToPrefix' xs nextLevel
