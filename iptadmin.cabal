@@ -10,7 +10,7 @@ Maintainer:     etarasov.ekb@gmail.com
 HomePage:       http://iptadmin.confmgr.org
 Stability:      Stable
 Synopsis:       web-interface for iptables
-Description:    web-interface for iptables based on happstack with PAM authorisation
+Description:    web-interface for iptables based on happstack with PAM authorization
 Category:       System, Tools, Web
 Extra-source-files: html/htmlwrapper.html,
                     util/ptmpl/Setup.hs,
