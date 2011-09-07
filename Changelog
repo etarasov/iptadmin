@@ -1,3 +1,6 @@
+Iptadmin 1.1.0    07.09.2011:
+  * Display counters in show page.
+
 Iptadmin 1.0.1    14.07.2011:
   * Add command line options --version, --help.
   * Syslog logging.
