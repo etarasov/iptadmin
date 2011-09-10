@@ -47,7 +47,8 @@ Executable iptadmin
                     filepath >= 1.1 && < 2,
                     network >= 2.2 && < 3,
                     hsyslog >= 1.4 && < 2,
-                    hdaemonize >= 0.4.4 && < 0.5
+                    hdaemonize >= 0.4.4 && < 0.5,
+                    file-embed >= 0.0.4 && < 0.1
     Main-Is:        Main.hs
     Other-modules:  IptAdmin.AccessControl
                     IptAdmin.AddChainPage
@@ -73,6 +74,7 @@ Executable iptadmin
                     IptAdmin.Render
                     IptAdmin.ShowPage
                     IptAdmin.ShowPage.Render
+                    IptAdmin.Static
                     IptAdmin.System
                     IptAdmin.Types
                     IptAdmin.Utils
