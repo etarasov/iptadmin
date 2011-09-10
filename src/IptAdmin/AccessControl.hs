@@ -9,6 +9,7 @@ import Data.Map
 import Data.Maybe
 import Happstack.Server.SimpleHTTP
 import IptAdmin.LoginPage as LoginPage (pageHandlers)
+import IptAdmin.Static as Static
 import IptAdmin.Types
 import IptAdmin.Utils
 import Prelude hiding (catch)
@@ -17,25 +18,27 @@ import System.Posix.User
 
 -- verify that client is allowed to access server
 authorize :: IORef Sessions -> IptAdminConfig -> IptAdmin Response -> IptAdminAuth Response
-authorize sessionsIORef config requestHandler = do
-    clientIdMay <- getDataFn $ lookCookieValue "sessionId"
-    isAuthorised <- case clientIdMay of
-        Nothing -> return False
-        Just a -> do
-            sessions <- liftIO $ readIORef sessionsIORef
-            let session = Data.Map.lookup a sessions
-            case session of
-                Nothing -> return False
-                Just _ -> return True
-    if isAuthorised
-        then
-            -- Run IptAdmin monad with state
-            mapServerPartT (addStateToStack (fromJust clientIdMay, sessionsIORef, config)) requestHandler
-        else
-            msum [ dir "login" $ LoginPage.pageHandlers (IptAdmin.AccessControl.authenticate $ cPamName config)
-                                                        sessionsIORef
-                 , redir "/login"
-                 ]
+authorize sessionsIORef config requestHandler =
+    -- allow 'static' dir without authorisation
+    (dir "static" Static.pageHandlers) `mplus` do
+        clientIdMay <- getDataFn $ lookCookieValue "sessionId"
+        isAuthorised <- case clientIdMay of
+            Nothing -> return False
+            Just a -> do
+                sessions <- liftIO $ readIORef sessionsIORef
+                let session = Data.Map.lookup a sessions
+                case session of
+                    Nothing -> return False
+                    Just _ -> return True
+        if isAuthorised
+            then
+                -- Run IptAdmin monad with state
+                mapServerPartT (addStateToStack (fromJust clientIdMay, sessionsIORef, config)) requestHandler
+            else
+                msum [ dir "login" $ LoginPage.pageHandlers (IptAdmin.AccessControl.authenticate $ cPamName config)
+                                                            sessionsIORef
+                     , redir "/login"
+                     ]
     where
         addStateToStack :: (Monad m) => MainState
                            -> UnWebT (ErrorT String (StateT MainState m)) a

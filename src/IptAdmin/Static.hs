@@ -25,8 +25,9 @@ import Text.Blaze.Renderer.String (renderHtml)
 
 -- TODO: 304
 
-pageHandlers :: IptAdmin Response
-pageHandlers = msum [ dirs "js/jquery-1.6.2.min.js" $ returnJs jquery162minjs
+pageHandlers :: IptAdminAuth Response
+pageHandlers = msum [ dirs "css/iptadmin.css" $ returnCss $ $(embedFile "static/css/iptadmin.css")
+                    , dirs "js/jquery-1.6.2.min.js" $ returnJs jquery162minjs
                     , dirs "js/jquery-ui-1.8.16.custom.min.js" $ returnJs jqueryUi1816customMinJs
                     , dirs "css/humanity/jquery-ui-1.8.16.custom.css" $ returnCss jqueryUi1816customCss
                     , dirs "css/humanity/images/ui-bg_flat_75_aaaaaa_40x100.png" $ returnPng $
@@ -59,7 +60,7 @@ pageHandlers = msum [ dirs "js/jquery-1.6.2.min.js" $ returnJs jquery162minjs
                         $(embedFile "static/css/humanity/images/ui-icons_ffffff_256x240.png")
                     ]
 
-returnJs :: B.ByteString -> IptAdmin Response
+returnJs :: B.ByteString -> IptAdminAuth Response
 returnJs file = return $ Response { rsCode = 200
                                   , rsHeaders = mkHeaders [("Content-type", "text/javascript; charset=utf8")]
                                   , rsFlags = RsFlags True
@@ -67,7 +68,7 @@ returnJs file = return $ Response { rsCode = 200
                                   , rsValidator = Nothing
                                   }
 
-returnCss :: B.ByteString -> IptAdmin Response
+returnCss :: B.ByteString -> IptAdminAuth Response
 returnCss file = return $ Response { rsCode = 200
                                    , rsHeaders = mkHeaders [("Content-type", "text/css; charset=utf8")]
                                    , rsFlags = RsFlags True
@@ -75,7 +76,7 @@ returnCss file = return $ Response { rsCode = 200
                                    , rsValidator = Nothing
                                    }
 
-returnPng :: B.ByteString -> IptAdmin Response
+returnPng :: B.ByteString -> IptAdminAuth Response
 returnPng file = return $ Response { rsCode = 200
                                    , rsHeaders = mkHeaders [("Content-type", "image/png; charset=utf8")]
                                    , rsFlags = RsFlags True

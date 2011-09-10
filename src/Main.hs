@@ -23,7 +23,6 @@ import IptAdmin.EditPage as EditPage
 import IptAdmin.EditPolicyPage as EditPolicyPage
 import IptAdmin.InsertPage as InsertPage
 import IptAdmin.ShowPage as ShowPage
-import IptAdmin.Static as Static
 import IptAdmin.System
 import IptAdmin.Types
 import IptAdmin.Utils
@@ -90,8 +89,7 @@ unpackErrorT handler = do
         Right x -> return x
 
 control :: IptAdmin Response
-control = msum [ dir "static" Static.pageHandlers
-               , commitChange
+control = msum [ commitChange
                , nullDir >> redir "/show"
                , dir "logout" logout
                , dir "show" ShowPage.pageHandlers
