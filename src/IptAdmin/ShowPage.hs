@@ -92,6 +92,7 @@ showFilter countType iptables iptables' = do
                               (sortFilterTable $ tFilter iptables)
                               (sortFilterTable $ tFilter iptables')
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
+        includeJs
         header "filter" "Iptables Filter table"
         showPageHtml filter'
 
@@ -105,6 +106,7 @@ showNat countType iptables iptables' = do
                           (sortNatTable $ tNat iptables)
                           (sortNatTable $ tNat iptables')
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
+        includeJs
         header "nat" "Iptables Nat table"
         showPageHtml nat
 
@@ -118,8 +120,15 @@ showMangle countType iptables iptables' = do
                              (sortMangleTable $ tMangle iptables)
                              (sortMangleTable $ tMangle iptables')
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
+        includeJs
         header "mangle" "Iptables Mangle table. Rule editing is not supported for Mangle yet."
         showPageHtml mangle
+
+includeJs :: Html
+includeJs =
+    H.script H.! A.type_ "text/javascript"
+             H.! A.src "/static/js/showpage.js"
+             $ ""
 
 showPageHtml :: Html -> Html
 showPageHtml table =

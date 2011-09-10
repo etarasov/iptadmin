@@ -245,3 +245,21 @@ td.targetParam {
     border-bottom: none;
     border-right: none;
 }
+
+/* Стили элементов jquery */
+
+.ui-button-text-only .ui-button-text {
+    padding: 0.4em 0;
+}
+
+.ui-button .ui-button-text {
+    line-height: 0.1;
+}
+
+.ui-button-icon-only {
+    width: 1em;
+}
+
+button.ui-button-icon-only {
+    width: 1em;
+}

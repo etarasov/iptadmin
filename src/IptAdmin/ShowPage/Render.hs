@@ -177,10 +177,13 @@ renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule count
                 ! A.href (fromString $ "/del?table="++tableName++"&chain="++chainName++"&pos=" ++ show ruleNum)
                 $ "✘" -- "X"
             if ruleEditable then
-                H.a ! A.class_ "button"
-                    ! A.title "Edit Rule"
-                    ! A.href (fromString $ "/edit?table="++tableName++"&chain="++chainName++"&pos=" ++ show ruleNum)
-                    $ "✎" -- "e"
+                H.button ! A.class_ "button editButton"
+                         ! A.title "Edit Rule"
+                         -- ! A.href (fromString $ "/edit?table="++tableName++"&chain="++chainName++"&pos=" ++ show ruleNum)
+                         ! dataAttribute "rulePos" (fromString $ show ruleNum)
+                         ! dataAttribute "chain" (fromString chainName)
+                         ! dataAttribute "table" (fromString tableName)
+                         $ "✎" -- "e"
                             else
                 mempty
             H.a ! A.class_ "button"

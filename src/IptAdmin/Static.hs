@@ -27,6 +27,7 @@ import Text.Blaze.Renderer.String (renderHtml)
 
 pageHandlers :: IptAdminAuth Response
 pageHandlers = msum [ dirs "css/iptadmin.css" $ returnCss $ $(embedFile "static/css/iptadmin.css")
+                    , dirs "js/showpage.js" $ returnJs $ $(embedFile "static/js/showpage.js")
                     , dirs "js/jquery-1.6.2.min.js" $ returnJs jquery162minjs
                     , dirs "js/jquery-ui-1.8.16.custom.min.js" $ returnJs jqueryUi1816customMinJs
                     , dirs "css/humanity/jquery-ui-1.8.16.custom.css" $ returnCss jqueryUi1816customCss
