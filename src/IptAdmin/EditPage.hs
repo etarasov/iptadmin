@@ -35,10 +35,7 @@ pageHandlerGet = do
 
     let userChainNames = getUserChains formParams chainName table
 
-    return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-        header tableName $ "Edit rule in '" ++ tableName
-                         ++ "' table in '" ++ chainName
-                         ++ "' chain in position " ++ show rulePosition
+    return $ buildResponse $ renderHtml $
         editFormHtml (tableName, chainName, rulePosition, userChainNames) formParams Nothing
 
 pageHandlerPost :: IptAdmin Response

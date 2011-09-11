@@ -34,3 +34,7 @@ uninstall:
 	rm /etc/pam.d/iptadmin || true
 	rm /etc/init.d/iptadmin
 	echo "uninstalled"
+
+htmlrebuild:
+	touch src/IptAdmin/Static.hs
+	make
