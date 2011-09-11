@@ -44,9 +44,9 @@ getRule = do
 
     rule <- case table of
             "filter" -> return $ cRules (head (filter (\c -> cName c == chain) $ tFilter iptables)) !! (pos - 1)
-            "nat" -> return $ cRules (head (filter (\c -> cName c == chain) $ tNat iptables)) !! pos
+            "nat" -> return $ cRules (head (filter (\c -> cName c == chain) $ tNat iptables)) !! (pos - 1)
             "mangle" -> return $ cRules (head (filter (\c -> cName c == chain) $ tMangle iptables)) !! (pos - 1)
-            "raw" -> return $ cRules (head (filter (\c -> cName c == chain) $ tRaw iptables)) !! pos
+            "raw" -> return $ cRules (head (filter (\c -> cName c == chain) $ tRaw iptables)) !! (pos - 1)
             a -> throwError $ "invalid table: " ++ a
 -- renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule counters opts tar, Rule counters2 _ _)) =
     let ruleHtml = renderRule  (table, chain) countType 0 (pos, (rule, rule))
