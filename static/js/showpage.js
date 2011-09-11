@@ -1,12 +1,5 @@
 $(document).ready(function(){
-    $('body').append('<div id="dialog1"></div>');
-    $(".editButton").button({
-        icons: {
-            primary: "ui-icon-wrench"
-        },
-        text: false
-    }).click( function() {
-
+    var editButtonHandler = function () {
         var dialog1;
 
         var loadEditForm = function (ans) {
@@ -49,6 +42,19 @@ $(document).ready(function(){
                                 success: function (ans2) {
                                     if (ans2 == "ok") {
                                         dialog1.dialog("destroy");
+                                        $.ajax({
+                                            type: "GET",
+                                            url: '/show/rule?table='+table+'&chain='+chain+'&pos='+rulePos,
+                                            success: function (ans3) {
+                                                $('#rule-tr-'+table+'-'+chain+'-'+rulePos).replaceWith(ans3);
+                                                $(".editButton").button({
+                                                    icons: {
+                                                        primary: "ui-icon-wrench"
+                                                    },
+                                                    text: false
+                                                }).click(editButtonHandler);
+                                            },
+                                        });
                                     }
                                     else {
                                         dialog1.html(ans2);
@@ -80,9 +86,17 @@ $(document).ready(function(){
             success: loadEditForm,
             error: function () {
                     alert("Server connection error");
-                }
+                },
         });
+    };
 
 
-    });
+    $('body').append('<div id="dialog1"></div>');
+    $(".editButton").button({
+        icons: {
+            primary: "ui-icon-wrench"
+        },
+        text: false
+    }).click(editButtonHandler);
+
 });

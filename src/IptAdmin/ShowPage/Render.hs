@@ -122,7 +122,8 @@ renderChain tableName countType maxCounterDiff refreshString (Chain n p counters
 renderRule :: (String, String) -> CountersType -> Integer -> (Int, (Rule, Rule)) -> Html
 renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule counters opts tar, Rule counters2 _ _)) =
     let mainTr = if even ruleNum then H.tr ! A.class_ "even"
-                                 else H.tr
+                                           ! A.id (fromString $ "rule-tr-" ++ tableName ++ "-" ++ chainName ++ "-" ++ show ruleNum)
+                                 else H.tr ! A.id (fromString $ "rule-tr-" ++ tableName ++ "-" ++ chainName ++ "-" ++ show ruleNum)
         mods' = filter isModule opts
         opts' = filter isOption opts
         mods'' = unwords $ map printOption mods'

@@ -5,7 +5,7 @@ module IptAdmin.ShowPage where
 import Control.Monad.Error
 import Control.Monad.State
 import Data.IORef
-import Data.Map
+import Data.Map hiding (filter)
 import Happstack.Server.SimpleHTTP
 import Template
 import IptAdmin.Render
@@ -22,9 +22,36 @@ import qualified Text.Blaze.Html5.Attributes as A
 import Text.Blaze.Renderer.String (renderHtml)
 
 pageHandlers :: IptAdmin Response
-pageHandlers = msum [ methodSP GET pageHandlerGet
+pageHandlers = msum [ dir "rule" (methodSP GET getRule)
+                    , methodSP GET pageHandlerGet
                     , methodSP POST pageHandlerPost
                     ]
+
+-- TODO: проверка изменений в iptables, синхронизация информации о правилах iptables
+getRule :: IptAdmin Response
+getRule = do
+    table <- getInputString "table"
+    chain <- getInputString "chain"
+    pos <- getInputRead "pos"
+
+    iptables <- getIptables
+
+    countTypeMay <- getDataFn $ lookCookieValue "countersType"
+    let countType = case countTypeMay of
+            Nothing -> CTPackets
+            Just "Bytes" -> CTBytes
+            _ -> CTPackets
+
+    rule <- case table of
+            "filter" -> return $ cRules (head (filter (\c -> cName c == chain) $ tFilter iptables)) !! (pos - 1)
+            "nat" -> return $ cRules (head (filter (\c -> cName c == chain) $ tNat iptables)) !! pos
+            "mangle" -> return $ cRules (head (filter (\c -> cName c == chain) $ tMangle iptables)) !! (pos - 1)
+            "raw" -> return $ cRules (head (filter (\c -> cName c == chain) $ tRaw iptables)) !! pos
+            a -> throwError $ "invalid table: " ++ a
+-- renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule counters opts tar, Rule counters2 _ _)) =
+    let ruleHtml = renderRule  (table, chain) countType 0 (pos, (rule, rule))
+
+    return $ buildResponse $ renderHtml ruleHtml
 
 pageHandlerGet :: IptAdmin Response
 pageHandlerGet = do
