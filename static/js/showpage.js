@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    $('body').append('<div id="dialog1"></div>');
     $(".editButton").button({
         icons: {
             primary: "ui-icon-wrench"
@@ -13,11 +14,53 @@ $(document).ready(function(){
             //console.log('loadEditForm');
             //console.log(ans);
 
-            $('body').append('<div id="dialog1"></div>');
             //alert('1');
             dialog1 = $('#dialog1').dialog({
                 modal: true,
                 resizable: false,
+                buttons: [
+                    {
+                        text: "Check",
+                        click: function () {
+                            var str = $("#editform").serialize();
+                            str = str + "&submit=Check";
+                            $.ajax({
+                                type: "POST",
+                                url: "/edit",
+                                data: str,
+                                success: function (ans2) {
+                                    dialog1.html(ans2);
+                                    dialog1.dialog("option","width",'auto');
+                                    dialog1.dialog("option","height",'auto');
+                                    dialog1.dialog("option","position","center");
+                                },
+                            });
+                        },
+                    },
+                    {
+                        text: "Submit",
+                        click: function () {
+                            var str = $("#editform").serialize();
+                            str = str + "&submit=Submit";
+                            $.ajax({
+                                type: "POST",
+                                url: "/edit",
+                                data: str,
+                                success: function (ans2) {
+                                    if (ans2 == "ok") {
+                                        dialog1.dialog("destroy");
+                                    }
+                                    else {
+                                        dialog1.html(ans2);
+                                        dialog1.dialog("option","width",'auto');
+                                        dialog1.dialog("option","height",'auto');
+                                        dialog1.dialog("option","position","center");
+                                    }
+                                },
+                            });
+                        },
+                    },
+                ],
                 //close: closeDialog,
             });
             //alert('2');
@@ -36,7 +79,7 @@ $(document).ready(function(){
             dataType: 'html',
             success: loadEditForm,
             error: function () {
-                    alert("ahtung");
+                    alert("Server connection error");
                 }
         });
 

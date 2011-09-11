@@ -51,10 +51,7 @@ pageHandlerPost = do
 
     let checkResE = editPageProcessParams addFormParams
     case checkResE of
-        Left formResp -> return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-            header tableName $ "Edit rule in '" ++ tableName
-                             ++ "' table in '" ++ chainName
-                             ++ "' chain in position " ++ show rulePosition
+        Left formResp -> return $ buildResponse $ renderHtml $ do
             editFormHtml (tableName, chainName, rulePosition, userChainNames) addFormParams $ Just formResp
         Right (opts, tar, formResp) -> do
             let (_, opts') = runState (mapM_ completeModules opts) opts
@@ -62,15 +59,13 @@ pageHandlerPost = do
 
             submit <- getInputString "submit"
             case submit of
-                "Check" -> return $ buildResponse $ Template.htmlWrapper $ renderHtml (do
-                    header tableName $ "Edit rule in '" ++ tableName
-                                     ++ "' table in '" ++ chainName
-                                     ++ "' chain in position " ++ show rulePosition
+                "Check" -> return $ buildResponse $ renderHtml (do
                     editFormHtml (tableName, chainName, rulePosition, userChainNames) addFormParams $ Just formResp
-                    ) ++ printRuleForRun rule
+                    ) -- ++ printRuleForRun rule
                 "Submit" -> do
                     tryChange (replaceRule tableName chainName rulePosition rule)
-                    redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName (Just rulePosition)
+                    -- redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName (Just rulePosition)
+                    return $ buildResponse "ok"
                 a -> throwError $ "Invalid value for 'submit' parameter: " ++ a
 
 checkParams :: String -> String -> Int -> IptAdmin ([Chain], Chain, Rule)

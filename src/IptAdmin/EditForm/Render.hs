@@ -45,8 +45,6 @@ editFormHtml (tableName, chainName, rulePos, userChainNames) form errorListMay =
                         H.th "Parameter"
                         maybe mempty (\_-> H.th "Message") errorListMay
                     mapM_ (renderFormEntry userChainNames) $ zip entryList mesListMay
-                H.input ! A.id "check" ! A.name "submit" ! A.type_ "submit" ! A.value "Check"
-                H.input ! A.id "submit" ! A.name "submit" ! A.type_ "submit" ! A.value "Submit"
 
 renderFormEntry :: [String] -> (FormEntry, Maybe ResMessage) -> Html
 renderFormEntry _ (FESrc en inv str, resMesMay) =
