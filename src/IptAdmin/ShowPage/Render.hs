@@ -115,7 +115,7 @@ renderChain tableName countType maxCounterDiff refreshString (Chain n p counters
             H.th ! A.class_ "col6" $ ""
         mapM_ (renderRule (tableName, n) countType maxCounterDiff) $ zip [1..] $ zip rs rs'
         H.tr $
-            H.td ! A.colspan "6" $
+            H.td ! A.colspan "7" $
                 H.a ! A.href (fromString $ "/add?table="++tableName++"&chain="++n) $ "Add rule"
 
 -- | (Table name, Chain name) -> Counters type -> max counter -> Rule -> Html
@@ -173,13 +173,13 @@ renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule count
         H.td target'
         H.td targetParam
         H.td $ do
-            H.button ! A.class_ "button delButton actionButton"
-                     ! A.title "Delete Rule"
-                     -- ! A.href (fromString $ "/del?table="++tableName++"&chain="++chainName++"&pos=" ++ show ruleNum)
+            H.button ! A.class_ "button insertButton actionButton"
+                     ! A.title "Insert Rule"
+                     -- ! A.href (fromString $ "/insert?table="++tableName++"&chain="++chainName++"&pos=" ++ show ruleNum)
                      ! dataAttribute "rulePos" (fromString $ show ruleNum)
                      ! dataAttribute "chain" (fromString chainName)
                      ! dataAttribute "table" (fromString tableName)
-                     $ "✘" -- "X"
+                     $ "+"
             if ruleEditable then
                 H.button ! A.class_ "button editButton actionButton"
                          ! A.title "Edit Rule"
@@ -190,10 +190,13 @@ renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule count
                          $ "✎" -- "e"
                             else
                 mempty
-            H.a ! A.class_ "button"
-                ! A.title "Insert Rule"
-                ! A.href (fromString $ "/insert?table="++tableName++"&chain="++chainName++"&pos=" ++ show ruleNum)
-                $ "+"
+            H.button ! A.class_ "button delButton actionButton"
+                     ! A.title "Delete Rule"
+                     -- ! A.href (fromString $ "/del?table="++tableName++"&chain="++chainName++"&pos=" ++ show ruleNum)
+                     ! dataAttribute "rulePos" (fromString $ show ruleNum)
+                     ! dataAttribute "chain" (fromString chainName)
+                     ! dataAttribute "table" (fromString tableName)
+                     $ "✘" -- "X"
 
 bytesToPrefix :: Integer -> String
 bytesToPrefix bytes = bytesToPrefix' ["","K","M","G","T","P","E","Z","Y"] bytes

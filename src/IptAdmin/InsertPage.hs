@@ -33,18 +33,14 @@ pageHandlerGet = do
 
     (PackedEditForm form) <- nullSelForm tableName chainName
     let userChainNames = getUserChains form chainName table
-    return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-        header tableName $ "Insert rule in '"
-                         ++ tableName ++ "' table  in '"
-                         ++ chainName ++ "' chain in position "
-                         ++ show rulePosition
+    return $ buildResponse $ renderHtml $ do
         editFormHtml (tableName, chainName, rulePosition, userChainNames) form Nothing
 
 pageHandlerPost :: IptAdmin Response
 pageHandlerPost = do
     tableName <- getInputNonEmptyString "table"
     chainName <- getInputNonEmptyString "chain"
-    rulePosition <- getInputRead "pos"
+    rulePosition <- getInputRead "rulePos"
     table <- getTable tableName
     checkParams table chainName rulePosition
 
@@ -53,11 +49,7 @@ pageHandlerPost = do
 
     let checkResE = editPageProcessParams editFormParams
     case checkResE of
-        Left formResp -> return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-            header tableName $ "Insert rule in '"
-                             ++ tableName ++ "' table in '"
-                             ++ chainName ++ "' chain in position "
-                             ++ show rulePosition
+        Left formResp -> return $ buildResponse $ renderHtml $ do
             editFormHtml (tableName, chainName, rulePosition, userChainNames) editFormParams $ Just formResp
         Right (opts, tar, formResp) -> do
             let (_, opts') = runState (mapM_ completeModules opts) opts
@@ -65,16 +57,13 @@ pageHandlerPost = do
 
             submit <- getInputString "submit"
             case submit of
-                "Check" -> return $ buildResponse $ Template.htmlWrapper $ renderHtml (do
-                    header tableName $ "Insert rule in '"
-                                     ++ tableName ++ "' table in '"
-                                     ++ chainName ++ "' chain in position "
-                                     ++ show rulePosition
+                "Check" -> return $ buildResponse $ renderHtml (do
                     editFormHtml (tableName, chainName, rulePosition, userChainNames) editFormParams $ Just formResp
-                    ) ++ printRuleForRun rule
+                    ) -- ++ printRuleForRun rule
                 "Submit" -> do
                     tryChange (insertRule tableName chainName rulePosition rule)
-                    redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName (Just rulePosition)
+                    -- redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName (Just rulePosition)
+                    return $ buildResponse "ok"
                 a -> throwError $ "Invalid value for 'submit' parameter: " ++ a
 
 checkParams :: [Chain] -> String -> Int -> IptAdmin ()
