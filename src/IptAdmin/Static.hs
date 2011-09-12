@@ -7,7 +7,7 @@ import Control.Monad.State
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as BL
 import Data.FileEmbed
-import Happstack.Server.HTTP.Types
+import Happstack.Server.Types
 import Happstack.Server.SimpleHTTP
 import Template
 import IptAdmin.Render
@@ -64,7 +64,7 @@ pageHandlers = msum [ dirs "css/iptadmin.css" $ returnCss $ $(embedFile "static/
 returnJs :: B.ByteString -> IptAdminAuth Response
 returnJs file = return $ Response { rsCode = 200
                                   , rsHeaders = mkHeaders [("Content-type", "text/javascript; charset=utf8")]
-                                  , rsFlags = RsFlags True
+                                  , rsFlags = nullRsFlags
                                   , rsBody = BL.pack $ B.unpack file
                                   , rsValidator = Nothing
                                   }
@@ -72,7 +72,7 @@ returnJs file = return $ Response { rsCode = 200
 returnCss :: B.ByteString -> IptAdminAuth Response
 returnCss file = return $ Response { rsCode = 200
                                    , rsHeaders = mkHeaders [("Content-type", "text/css; charset=utf8")]
-                                   , rsFlags = RsFlags True
+                                   , rsFlags = nullRsFlags
                                    , rsBody = BL.pack $ B.unpack file
                                    , rsValidator = Nothing
                                    }
@@ -80,7 +80,7 @@ returnCss file = return $ Response { rsCode = 200
 returnPng :: B.ByteString -> IptAdminAuth Response
 returnPng file = return $ Response { rsCode = 200
                                    , rsHeaders = mkHeaders [("Content-type", "image/png; charset=utf8")]
-                                   , rsFlags = RsFlags True
+                                   , rsFlags = nullRsFlags
                                    , rsBody = BL.pack $ B.unpack file
                                    , rsValidator = Nothing
                                    }

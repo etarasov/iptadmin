@@ -20,12 +20,12 @@ buildResponse input = let respPlain = toResponse input
 redir :: Monad m => String -> ServerPartT m Response
 redir url = seeOther url (toResponse "")
 
-getInputString :: Monad m => String -> ServerPartT (ErrorT String m) String
+getInputString :: MonadIO m => String -> ServerPartT (ErrorT String m) String
 getInputString input = do
-    resM <- getDataFn $ look input
-    case resM of
-        Nothing -> throwError $ "Parameter not found: " ++ input
-        Just res -> return res
+    resE <- getDataFn $ look input
+    case resE of
+        Left _ -> throwError $ "Parameter not found: " ++ input
+        Right res -> return res
 
 getInputNonEmptyString :: String -> IptAdmin String
 getInputNonEmptyString input = do
@@ -53,10 +53,10 @@ getInputRead input = do
 
 isThereInput :: String -> IptAdmin Bool
 isThereInput input = do
-    resM <- getDataFn $ look input
-    return $ case resM of
-                Nothing -> False
-                Just _ -> True
+    resE <- getDataFn $ look input
+    return $ case resE of
+                Left _ -> False
+                Right _ -> True
 
 -- | Parser wrapper that checks eof
 pWrapper :: GenParser Char st a -> GenParser Char st a

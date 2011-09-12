@@ -21,10 +21,10 @@ authorize :: IORef Sessions -> IptAdminConfig -> IptAdmin Response -> IptAdminAu
 authorize sessionsIORef config requestHandler =
     -- allow 'static' dir without authorisation
     (dir "static" Static.pageHandlers) `mplus` do
-        clientIdMay <- getDataFn $ lookCookieValue "sessionId"
-        isAuthorised <- case clientIdMay of
-            Nothing -> return False
-            Just a -> do
+        clientIdE <- getDataFn $ lookCookieValue "sessionId"
+        isAuthorised <- case clientIdE of
+            Left _ -> return False
+            Right a -> do
                 sessions <- liftIO $ readIORef sessionsIORef
                 let session = Data.Map.lookup a sessions
                 case session of
@@ -33,7 +33,7 @@ authorize sessionsIORef config requestHandler =
         if isAuthorised
             then
                 -- Run IptAdmin monad with state
-                mapServerPartT (addStateToStack (fromJust clientIdMay, sessionsIORef, config)) requestHandler
+                mapServerPartT (addStateToStack (either undefined id clientIdE, sessionsIORef, config)) requestHandler
             else
                 msum [ dir "login" $ LoginPage.pageHandlers (IptAdmin.AccessControl.authenticate $ cPamName config)
                                                             sessionsIORef

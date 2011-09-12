@@ -8,7 +8,7 @@ import Data.Map (insert)
 import Data.Monoid
 import Data.String
 import Data.Time
-import Happstack.Server.SimpleHTTP
+import Happstack.Server.SimpleHTTP hiding (Session)
 import Template
 import IptAdmin.Render
 import IptAdmin.System
@@ -53,7 +53,7 @@ pageHandlerPost authenticate sessionsIORef = do
             -- 2. Добавляем установку кукиса в заголовок
             -- 2.1. Собариаем cookie
             let sessionIdCookie = mkCookie "sessionId" sessionId
-            addCookie (60 * 60 * 24 * 365 * 10) sessionIdCookie
+            addCookie (MaxAge $ 60 * 60 * 24 * 365 * 10) sessionIdCookie
             -- 3. Обновляем состояние
             curTime <- liftIO getCurrentTime
             iptables <- getIptables

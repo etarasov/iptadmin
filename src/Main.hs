@@ -10,8 +10,9 @@ import Data.List hiding (insert)
 import Data.Map hiding (map)
 import Data.Monoid
 import Data.Version
+import Happstack.Server.Internal.Monads
 import Happstack.Server.SimpleHTTP
-import Happstack.State
+import Happstack.State.Control
 import IptAdmin.AccessControl
 import IptAdmin.AddChainPage as AddChainPage
 import IptAdmin.AddPage as AddPage
@@ -62,7 +63,7 @@ main = do
 startDaemon :: IptAdminConfig -> a -> IO ()
 startDaemon config _ = do
     sessions <- newIORef empty
-    let httpConf = Conf (cPort config) Nothing
+    let httpConf = Conf (cPort config) Nothing Nothing 60
 
     -- create socket manually because we must listen only on 127.0.0.1
     sock <- socket AF_INET Stream defaultProtocol
@@ -75,7 +76,8 @@ startDaemon config _ = do
     httpTid <- forkIO $ simpleHTTPWithSocket' unpackErrorT
                                               sock
                                               httpConf
-                                              $ authorize sessions config control
+                                              $ decodeBody (defaultBodyPolicy "/tmp/" 4096 4096 4096 )
+                                              >> authorize sessions config control
     waitForTermination
     syslog Notice "Shutting down..."
     killThread httpTid

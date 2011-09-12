@@ -37,10 +37,10 @@ getRule = do
 
     iptables <- getIptables
 
-    countTypeMay <- getDataFn $ lookCookieValue "countersType"
-    let countType = case countTypeMay of
-            Nothing -> CTPackets
-            Just "Bytes" -> CTBytes
+    countTypeE <- getDataFn $ lookCookieValue "countersType"
+    let countType = case countTypeE of
+            Left _ -> CTPackets
+            Right "Bytes" -> CTBytes
             _ -> CTPackets
 
     rule <- case table of
@@ -61,10 +61,10 @@ getChain = do
 
     iptables <- getIptables
 
-    countTypeMay <- getDataFn $ lookCookieValue "countersType"
-    let countType = case countTypeMay of
-            Nothing -> CTPackets
-            Just "Bytes" -> CTBytes
+    countTypeE <- getDataFn $ lookCookieValue "countersType"
+    let countType = case countTypeE of
+            Left _ -> CTPackets
+            Right "Bytes" -> CTBytes
             _ -> CTPackets
 
     chain <- case table of
@@ -91,17 +91,17 @@ pageHandlerGet = do
         case setCountType of
             "bytes" -> do
                 let countTypeCookie = mkCookie "countersType" "Bytes"
-                addCookie (60 * 60 * 24 * 365 * 10) countTypeCookie
+                addCookie (MaxAge $ 60 * 60 * 24 * 365 * 10) countTypeCookie
                 return CTBytes
             "packets" -> do
                 let countTypeCookie = mkCookie "countersType" "Packets"
-                addCookie (60 * 60 * 24 * 365 * 10) countTypeCookie
+                addCookie (MaxAge $ 60 * 60 * 24 * 365 * 10) countTypeCookie
                 return CTPackets
             _ -> do
-                countTypeMay <- getDataFn $ lookCookieValue "countersType"
-                case countTypeMay of
-                    Nothing -> return CTPackets
-                    Just "Bytes" -> return CTBytes
+                countTypeE <- getDataFn $ lookCookieValue "countersType"
+                case countTypeE of
+                    Left _ -> return CTPackets
+                    Right "Bytes" -> return CTBytes
                     _ -> return CTPackets
 
     (sessionId, sessionsIO, _) <- lift get
