@@ -20,6 +20,7 @@ pageHandlers = msum [ methodSP GET pageHandlerGet
                     , methodSP POST pageHandlerPost
                     ]
 
+-- | Deprecated. Was used before jquery-ui integration.
 pageHandlerGet :: IptAdmin Response
 pageHandlerGet = do
     tableName <- getInputNonEmptyString "table"
@@ -44,7 +45,8 @@ pageHandlerPost = do
     _ <- checkParams tableName chainName rulePosition
 
     tryChange (deleteRule tableName chainName rulePosition)
-    redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName (Just rulePosition)
+    -- redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName (Just rulePosition)
+    return $ buildResponse "ok"
 
 checkParams :: String -> String -> Int -> IptAdmin (Chain, Rule)
 checkParams tableName chainName rulePosition = do

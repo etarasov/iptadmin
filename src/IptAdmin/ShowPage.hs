@@ -23,6 +23,7 @@ import Text.Blaze.Renderer.String (renderHtml)
 
 pageHandlers :: IptAdmin Response
 pageHandlers = msum [ dir "rule" (methodSP GET getRule)
+                    , dir "chain" (methodSP GET getChain)
                     , methodSP GET pageHandlerGet
                     , methodSP POST pageHandlerPost
                     ]
@@ -52,6 +53,32 @@ getRule = do
     let ruleHtml = renderRule  (table, chain) countType 0 (pos, (rule, rule))
 
     return $ buildResponse $ renderHtml ruleHtml
+
+getChain :: IptAdmin Response
+getChain = do
+    table <- getInputString "table"
+    chainName <- getInputString "chain"
+
+    iptables <- getIptables
+
+    countTypeMay <- getDataFn $ lookCookieValue "countersType"
+    let countType = case countTypeMay of
+            Nothing -> CTPackets
+            Just "Bytes" -> CTBytes
+            _ -> CTPackets
+
+    chain <- case table of
+        "filter" -> return $ head (filter (\c -> cName c == chainName) $ tFilter iptables)
+        "nat" -> return $ head (filter (\c -> cName c == chainName) $ tNat iptables)
+        "mangle" -> return $ head (filter (\c -> cName c == chainName) $ tMangle iptables)
+        "raw" -> return $ head (filter (\c -> cName c == chainName) $ tRaw iptables)
+        a -> throwError $ "invalid table: " ++ a
+
+    refreshString <- liftIO $ show `fmap` (randomRIO (1,100000) :: IO Int)
+
+    let chainHtml = renderChain table countType 0 refreshString (chain, chain)
+
+    return $ buildResponse $ renderHtml chainHtml
 
 pageHandlerGet :: IptAdmin Response
 pageHandlerGet = do

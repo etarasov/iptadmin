@@ -35,7 +35,7 @@ renderTable (tableName, _) countType maxCounter refreshString chains chains' = d
 -- | Table name -> counters type -> max counter -> refresh string ->  Chain -> Html
 renderChain :: String -> CountersType -> Integer -> String -> (Chain,Chain) -> Html
 renderChain tableName countType maxCounterDiff refreshString (Chain n p counters rs, Chain _ _ counters' rs') =
-    H.table ! A.class_ "rules" $ do
+    H.table ! A.class_ "rules" ! A.id (fromString $ "chain-table-" ++ tableName ++ "-" ++ n) $ do
         H.tr $ do
             H.td ! A.colspan "4" $
                 H.div ! A.id "chainName" $ do
@@ -173,10 +173,13 @@ renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule count
         H.td target'
         H.td targetParam
         H.td $ do
-            H.a ! A.class_ "button"
-                ! A.title "Delete Rule"
-                ! A.href (fromString $ "/del?table="++tableName++"&chain="++chainName++"&pos=" ++ show ruleNum)
-                $ "✘" -- "X"
+            H.button ! A.class_ "button delButton actionButton"
+                     ! A.title "Delete Rule"
+                     -- ! A.href (fromString $ "/del?table="++tableName++"&chain="++chainName++"&pos=" ++ show ruleNum)
+                     ! dataAttribute "rulePos" (fromString $ show ruleNum)
+                     ! dataAttribute "chain" (fromString chainName)
+                     ! dataAttribute "table" (fromString tableName)
+                     $ "✘" -- "X"
             if ruleEditable then
                 H.button ! A.class_ "button editButton actionButton"
                          ! A.title "Edit Rule"

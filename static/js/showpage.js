@@ -1,13 +1,25 @@
 $(document).ready(function(){
+    var rebuttonActionButtons = function () {
+        $(".editButton").button({
+            icons: {
+                primary: "ui-icon-wrench"
+            },
+            text: false
+        }).click(editButtonHandler);
+
+        $(".delButton").button({
+            icons: {
+                primary: "ui-icon-closethick"
+            },
+            text: false,
+        }).click(delButtonHandler);
+    };
+
     var editButtonHandler = function () {
         var dialog1;
 
         var loadEditForm = function (ans) {
-            //alert('loadEditForm');
-            //console.log('loadEditForm');
-            //console.log(ans);
 
-            //alert('1');
             dialog1 = $('#dialog1').dialog({
                 modal: true,
                 resizable: false,
@@ -47,12 +59,7 @@ $(document).ready(function(){
                                             url: '/show/rule?table='+table+'&chain='+chain+'&pos='+rulePos,
                                             success: function (ans3) {
                                                 $('#rule-tr-'+table+'-'+chain+'-'+rulePos).replaceWith(ans3);
-                                                $(".editButton").button({
-                                                    icons: {
-                                                        primary: "ui-icon-wrench"
-                                                    },
-                                                    text: false
-                                                }).click(editButtonHandler);
+                                                rebuttonActionButtons();
                                             },
                                         });
                                     }
@@ -90,13 +97,58 @@ $(document).ready(function(){
         });
     };
 
+    var delButtonHandler = function () {
+
+        var rulePos = this.getAttribute('data-rulePos');
+        var chain = this.getAttribute('data-chain');
+        var table = this.getAttribute('data-table');
+
+        var dialog1;
+        $("#dialog1").html("Delete rule number "+rulePos+" from '"+chain+"' chain in '"+table+"' table.");
+
+        dialog1 = $("#dialog1").dialog({
+            modal: true,
+            resizable: false,
+            title: "Delete rule",
+            buttons: [
+                {
+                    text: "Delete",
+                    click: function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/del",
+                            data: 'rulePos='+rulePos+'&chain='+chain+'&table='+table,
+                            success: function (ans4) {
+                                if (ans4 == "ok") {
+                                    dialog1.dialog("destroy");
+                                    $.ajax({
+                                        type: "GET",
+                                        url: '/show/chain?table='+table+'&chain='+chain,
+                                        success: function (ans6) {
+                                            $('#chain-table-'+table+'-'+chain).replaceWith(ans6);
+                                            rebuttonActionButtons();
+                                        },
+                                    });
+                                    // alert("rule was deleted");
+                                }
+                                else {
+                                    alert("rule deletion error");
+                                };
+                            },
+                        });
+                    },
+                },
+                {
+                    text: "Cancel",
+                    click: function () {
+                        dialog1.dialog("close");
+                    },
+                },
+            ],
+        });
+    };
+
 
     $('body').append('<div id="dialog1"></div>');
-    $(".editButton").button({
-        icons: {
-            primary: "ui-icon-wrench"
-        },
-        text: false
-    }).click(editButtonHandler);
-
+    rebuttonActionButtons();
 });
