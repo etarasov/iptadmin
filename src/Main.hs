@@ -76,7 +76,7 @@ startDaemon config _ = do
     httpTid <- forkIO $ simpleHTTPWithSocket' unpackErrorT
                                               sock
                                               httpConf
-                                              $ decodeBody (defaultBodyPolicy "/tmp/" 4096 4096 4096 )
+                                              $ decodeBody (defaultBodyPolicy "/tmp/" 4096 20000 40000 )
                                               >> authorize sessions config control
     waitForTermination
     syslog Notice "Shutting down..."
