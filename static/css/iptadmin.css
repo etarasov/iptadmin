@@ -246,6 +246,24 @@ td.targetParam {
     border-right: none;
 }
 
+/* Стиль кнопок + e X
+ */
+button.actionButton{
+    width: 1.5em;
+    background-color:#f0f0f0;
+    color: #5b5b5b;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    padding: 0;
+    border: 1px solid;
+    border-color: #b7b7b7;
+    margin-left: 1px;
+}
+
+button.actionButton:hover{
+    background-color: #fafafa;
+}
+
 /* Стили элементов jquery */
 
 /*
@@ -272,6 +290,3 @@ button.ui-button {
     padding: 5px;
 }
 
-button.actionButton{
-    padding: 0;
-}
