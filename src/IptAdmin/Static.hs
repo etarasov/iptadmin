@@ -4,7 +4,6 @@ module IptAdmin.Static where
 
 import Control.Monad.Error
 import qualified Data.ByteString as B
-import qualified Data.ByteString.Lazy as BL
 import Data.FileEmbed
 import Happstack.Server.FileServe.BuildingBlocks
 import Happstack.Server.Types
@@ -48,23 +47,6 @@ pageHandlers = msum [ dirs "css/iptadmin.css" $ returnCss $ $(embedFile "static/
                         $(embedFile "static/css/humanity/images/ui-icons_ffffff_256x240.png")
                     ]
 
-{-
-returnJs :: B.ByteString -> IptAdminAuth Response
-returnJs file = return $ Response { rsCode = 200
-                                  , rsHeaders = mkHeaders [("Content-type", "text/javascript; charset=utf8")]
-                                  , rsFlags = nullRsFlags
-                                  , rsBody = BL.pack $ B.unpack file
-                                  , rsValidator = Nothing
-                                  }
-
-returnCss :: B.ByteString -> IptAdminAuth Response
-returnCss file = return $ Response { rsCode = 200
-                                   , rsHeaders = mkHeaders [("Content-type", "text/css; charset=utf8")]
-                                   , rsFlags = nullRsFlags
-                                   , rsBody = BL.pack $ B.unpack file
-                                   , rsValidator = Nothing
-                                   }
-                                   -}
 returnJs :: B.ByteString -> IptAdminAuth Response
 returnJs file = do
     request <- askRq

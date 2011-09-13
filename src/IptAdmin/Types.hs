@@ -23,6 +23,7 @@ data Session = Session { lastVisit :: UTCTime
                        , backup :: Maybe String
                        , sIptables :: Iptables
                        }
+                       deriving (Show)
 
 type MainState = (SessionId, IORef Sessions, IptAdminConfig)
 

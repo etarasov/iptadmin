@@ -14,6 +14,7 @@ import IptAdmin.Types
 import IptAdmin.Utils
 import Prelude hiding (catch)
 import System.Posix.PAM as PAM
+-- import System.Posix.Syslog
 import System.Posix.User
 
 -- verify that client is allowed to access server
@@ -23,12 +24,17 @@ authorize sessionsIORef config requestHandler =
     (dir "static" Static.pageHandlers) `mplus` do
         clientIdE <- getDataFn $ lookCookieValue "sessionId"
         isAuthorised <- case clientIdE of
-            Left _ -> return False
+            Left _ ->
+                -- liftIO $ syslog Notice $ "sessionId cookie get error: " ++ show e
+                return False
             Right a -> do
                 sessions <- liftIO $ readIORef sessionsIORef
                 let session = Data.Map.lookup a sessions
                 case session of
-                    Nothing -> return False
+                    Nothing ->
+                        -- liftIO $ syslog Notice $ "session was not found: " ++ a
+                        -- liftIO $ syslog Notice $ "sessions: " ++ show sessions
+                        return False
                     Just _ -> return True
         if isAuthorised
             then
