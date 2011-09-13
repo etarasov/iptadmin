@@ -1,5 +1,6 @@
 $(document).ready(function(){
     var rebuttonActionButtons = function () {
+        /*
         $(".editButton").button({
             icons: {
                 primary: "ui-icon-wrench"
@@ -20,6 +21,10 @@ $(document).ready(function(){
             },
             text: false,
         }).click(insertButtonHandler);
+        */
+        $(".editButton").click(editButtonHandler);
+        $(".delButton").click(delButtonHandler);
+        $(".insertButton").click(insertButtonHandler);
     };
 
     var editButtonHandler = function () {
