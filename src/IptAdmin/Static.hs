@@ -3,27 +3,14 @@
 module IptAdmin.Static where
 
 import Control.Monad.Error
-import Control.Monad.State
 import qualified Data.ByteString as B
 import qualified Data.ByteString.Lazy as BL
 import Data.FileEmbed
+import Happstack.Server.FileServe.BuildingBlocks
 import Happstack.Server.Types
 import Happstack.Server.SimpleHTTP
-import Template
-import IptAdmin.Render
-import IptAdmin.ShowPage.Render
-import IptAdmin.System
 import IptAdmin.Types
-import IptAdmin.Utils
-import Iptables
-import Iptables.Types
-import System.Random
-import Text.Blaze
-import qualified Text.Blaze.Html5 as H
-import qualified Text.Blaze.Html5.Attributes as A
-import Text.Blaze.Renderer.String (renderHtml)
-
--- TODO: 304
+import System.Time
 
 pageHandlers :: IptAdminAuth Response
 pageHandlers = msum [ dirs "css/iptadmin.css" $ returnCss $ $(embedFile "static/css/iptadmin.css")
@@ -61,6 +48,7 @@ pageHandlers = msum [ dirs "css/iptadmin.css" $ returnCss $ $(embedFile "static/
                         $(embedFile "static/css/humanity/images/ui-icons_ffffff_256x240.png")
                     ]
 
+{-
 returnJs :: B.ByteString -> IptAdminAuth Response
 returnJs file = return $ Response { rsCode = 200
                                   , rsHeaders = mkHeaders [("Content-type", "text/javascript; charset=utf8")]
@@ -76,14 +64,47 @@ returnCss file = return $ Response { rsCode = 200
                                    , rsBody = BL.pack $ B.unpack file
                                    , rsValidator = Nothing
                                    }
+                                   -}
+returnJs :: B.ByteString -> IptAdminAuth Response
+returnJs file = do
+    request <- askRq
+    return $ strictByteStringResponse "text/javascript; charset=utf8"
+                                      file
+                                      (Just (updateTime, request))
+                                      0
+                                      (toInteger $ B.length file)
+
+returnCss :: B.ByteString -> IptAdminAuth Response
+returnCss file = do
+    request <- askRq
+    return $ strictByteStringResponse "text/css; charset=utf8"
+                                      file
+                                      (Just (updateTime, request))
+                                      0
+                                      (toInteger $ B.length file)
 
 returnPng :: B.ByteString -> IptAdminAuth Response
-returnPng file = return $ Response { rsCode = 200
-                                   , rsHeaders = mkHeaders [("Content-type", "image/png; charset=utf8")]
-                                   , rsFlags = nullRsFlags
-                                   , rsBody = BL.pack $ B.unpack file
-                                   , rsValidator = Nothing
-                                   }
+returnPng file = do
+    request <- askRq
+    return $ strictByteStringResponse "image/png"
+                                      file
+                                      (Just (updateTime, request))
+                                      0
+                                      (toInteger $ B.length file)
+
+updateTime :: CalendarTime
+updateTime = CalendarTime 2011
+                          September
+                          13
+                          0
+                          0
+                          0
+                          0
+                          Tuesday
+                          250
+                          "GMT"
+                          0
+                          False
 
 jquery162minjs :: B.ByteString
 jquery162minjs = $(embedFile "static/js/jquery-1.6.2.min.js")
