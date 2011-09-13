@@ -49,7 +49,7 @@ pageHandlerPost authenticate sessionsIORef = do
                    loginForm login $ Just errorMsg
         Nothing -> do
             -- 1. Генерируем рандомный id
-            sessionId <- liftIO $ replicateM 50 $ randomRIO ('A', 'z')
+            sessionId <- liftIO $ replicateM 50 $ randomRIO ('a', 'z')
             -- 2. Добавляем установку кукиса в заголовок
             -- 2.1. Собариаем cookie
             let sessionIdCookie = mkCookie "sessionId" sessionId
