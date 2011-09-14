@@ -281,6 +281,10 @@ button.bigActionButton:hover{
     background-color: #fafafa;
 }
 
+button#addChainButton {
+    margin-top: 5px;
+}
+
 /* Стили элементов jquery */
 
 /*

@@ -30,7 +30,12 @@ renderTable :: (String, String)       -- ^ (table name, table name for rendering
             -> Html
 renderTable (tableName, _) countType maxCounter refreshString chains chains' = do
     mapM_ (renderChain tableName countType maxCounter refreshString) $ zip chains chains'
-    H.a ! A.href (fromString $ "/addchain?table="++tableName) $ "Add chain"
+    -- H.a ! A.href (fromString $ "/addchain?table="++tableName) $ "Add chain"
+    H.button ! A.class_ "button addChainButton bigActionButton"
+             ! A.title "Add user defined chain"
+             ! dataAttribute "table" (fromString tableName)
+             ! A.id "addChainButton"
+             $ "Add chain"
 
 -- | Table name -> counters type -> max counter -> refresh string ->  Chain -> Html
 renderChain :: String -> CountersType -> Integer -> String -> (Chain,Chain) -> Html

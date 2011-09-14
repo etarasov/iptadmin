@@ -23,8 +23,7 @@ pageHandlers = msum [ methodSP GET pageHandlerGet
 pageHandlerGet :: IptAdmin Response
 pageHandlerGet = do
     tableName <- getInputNonEmptyString "table"
-    return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-        header tableName $ "Add user defined chain in '" ++ tableName ++ "' table"
+    return $ buildResponse $ renderHtml $ do
         editChainForm (tableName, "") "" Nothing
 
 pageHandlerPost :: IptAdmin Response
@@ -33,8 +32,7 @@ pageHandlerPost = do
     newChainName <- getInputString "newChainName"
     let newChainNameE = parse parseChainName "chain name" newChainName
     case newChainNameE of
-        Left e -> return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-            header tableName $ "Add user defined chain in '" ++ tableName ++ "' table"
+        Left e -> return $ buildResponse $ renderHtml $ do
             editChainForm (tableName, "") newChainName $ Just $ "Parameter error: " ++ show e
         Right newChainName' -> do
             iptables <- getIptables
@@ -46,16 +44,15 @@ pageHandlerPost = do
                 a -> throwError $ "Invalid table parameter: " ++ a
             let checkChainMay = getChainByName newChainName' table
             case checkChainMay of
-                Just _ -> return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-                    header tableName $ "Add user defined chain in '" ++ tableName ++ "' table"
+                Just _ -> return $ buildResponse $ renderHtml $ do
                     editChainForm (tableName, "") newChainName' $ Just "A chain with the same name already exists"
                 Nothing -> do
                     submit <- getInputString "submit"
                     case submit of
-                        "Check" -> return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-                            header tableName $ "Add user defined chain in '" ++ tableName ++ "' table"
+                        "Check" -> return $ buildResponse $ renderHtml $ do
                             editChainForm (tableName, "") newChainName' $ Just "The name is valid"
                         "Submit" -> do
                             tryChange $ addChain tableName newChainName'
-                            redir $ "/show?table=" ++ tableName ++ bookmarkForJump newChainName' Nothing
+                            -- redir $ "/show?table=" ++ tableName ++ bookmarkForJump newChainName' Nothing
+                            return $ buildResponse $ "ok:" ++ newChainName'
                         a -> throwError $ "Invalid value for 'submit' parameter: " ++ a
