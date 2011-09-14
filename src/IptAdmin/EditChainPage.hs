@@ -29,8 +29,7 @@ pageHandlerGet = do
     let chainMay = getChainByName chainName table
     case chainMay of
         Nothing -> throwError $ "Invalid chain name: " ++ chainName
-        Just _ -> return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-            header tableName $ "Edit name of '" ++ chainName ++ "' chain in '" ++ tableName ++ "' table"
+        Just _ -> return $ buildResponse $ renderHtml $ do
             editChainForm (tableName, chainName) chainName Nothing
 
 pageHandlerPost :: IptAdmin Response
@@ -42,31 +41,26 @@ pageHandlerPost = do
 
     let newChainNameE = parse parseChainName "chain name" newChainName
     case newChainNameE of
-        Left e -> return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-            header tableName $ "Edit name of '" ++ chainName ++ "' chain in '" ++ tableName ++ "' table"
+        Left e -> return $ buildResponse $ renderHtml $ do
             editChainForm (tableName, chainName) newChainName $ Just $ "Parameter error: " ++ show e
         Right newChainName' ->
             if chainName == newChainName'
-                then return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-                    header tableName $ "Edit name of '" ++ chainName ++ "' chain in '" ++ tableName ++ "' table"
+                then return $ buildResponse $ renderHtml $ do
                     editChainForm (tableName, chainName) newChainName' $ Just "The name was not changed"
                 else do
                     table <- getTable tableName
                     let checkChainMay = getChainByName newChainName' table
                     case checkChainMay of
-                        Just _ -> return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-                            header tableName $ "Edit name of '" ++ chainName ++ "' chain in '" ++ tableName ++ "' table"
+                        Just _ -> return $ buildResponse $ renderHtml $ do
                             editChainForm (tableName, chainName) newChainName' $
                                 Just "A chain with the same name already exists"
                         Nothing -> do
                             submit <- getInputString "submit"
                             case submit of
-                                "Check" -> return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-                                    header tableName $ "Edit name of '" ++ chainName
-                                                     ++ "' chain in '" ++ tableName
-                                                     ++ "' table"
+                                "Check" -> return $ buildResponse $ renderHtml $ do
                                     editChainForm (tableName, chainName) newChainName' $ Just "The name is valid"
                                 "Submit" -> do
                                     tryChange $ renameChain tableName chainName newChainName'
-                                    redir $ "/show?table=" ++ tableName ++ bookmarkForJump newChainName' Nothing
+                                    -- redir $ "/show?table=" ++ tableName ++ bookmarkForJump newChainName' Nothing
+                                    return $ buildResponse $ "ok:" ++ newChainName'
                                 a -> throwError $ "Invalid value for 'submit' parameter: " ++ a

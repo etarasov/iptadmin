@@ -26,6 +26,11 @@ $(document).ready(function(){
         $(".delButton").click(delButtonHandler);
         $(".insertButton").click(insertButtonHandler);
         $(".addButton").click(addButtonHandler);
+        $(".editChainButton").click(editChainButtonHandler);
+    };
+
+    var ajaxError = function () {
+        alert('Server connection error');
     };
 
     var editButtonHandler = function () {
@@ -318,6 +323,88 @@ $(document).ready(function(){
                                                     rebuttonActionButtons();
                                                 },
                                             })
+                                        }
+                                        else {
+                                            dialog1.html(ans);
+                                            dialog1.dialog("option","width",'auto');
+                                            dialog1.dialog("option","height",'auto');
+                                            dialog1.dialog("option","position","center");
+                                        }
+                                    },
+                                });
+                            },
+                        },
+                    ],
+                });
+
+                dialog1.html(ans);
+                dialog1.dialog("option","width",'auto');
+                dialog1.dialog("option","height",'auto');
+                dialog1.dialog("option","position","center");
+            },
+        });
+    };
+
+    var editChainButtonHandler = function () {
+        var dialog1;
+
+        var chain = this.getAttribute('data-chain');
+        var table = this.getAttribute('data-table');
+
+        $.ajax({
+            url: '/editchain?table='+table+'&chain='+chain,
+            dataType: 'html',
+            error: ajaxError,
+            success: function (ans) {
+                $('#dialog').html("");
+                dialog1 = $('#dialog1').dialog({
+                    title: "Edit chain name",
+                    modal: true,
+                    resizable: false,
+                    buttons: [
+                        {
+                            text: "Check",
+                            click: function () {
+                                var str = $('#editChainForm').serialize();
+                                str = str + '&submit=Check';
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/editchain",
+                                    data: str,
+                                    error: ajaxError,
+                                    success: function (ans) {
+                                        dialog1.html(ans);
+                                        dialog1.dialog("option","width",'auto');
+                                        dialog1.dialog("option","height",'auto');
+                                        dialog1.dialog("option","position","center");
+                                    },
+                                });
+                            },
+                        },
+                        {
+                            text: "Submit",
+                            click: function () {
+                                var str = $('#editChainForm').serialize();
+                                str = str + '&submit=Submit';
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/editchain",
+                                    data: str,
+                                    error: ajaxError,
+                                    success: function (ans) {
+                                        if (ans.split(':')[0] == "ok") {
+                                            // "ok:NewChainName
+                                            newChain = ans.split(':')[1];
+                                            dialog1.dialog("destroy");
+                                            $.ajax({
+                                                type: "GET",
+                                                url: '/show/chain?table='+table+'&chain='+newChain,
+                                                error: ajaxError,
+                                                success: function (ans) {
+                                                    $('#chain-table-'+table+'-'+chain).replaceWith(ans);
+                                                    rebuttonActionButtons();
+                                                },
+                                            });
                                         }
                                         else {
                                             dialog1.html(ans);

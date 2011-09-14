@@ -11,7 +11,7 @@ import qualified Text.Blaze.Html5.Attributes as A
 editChainForm :: (String, String) -> String -> Maybe String -> Html
 editChainForm (tableName, chainName) newChainName mesMay =
     H.div ! A.class_ "editForm" $
-        H.form ! A.id "addChainForm" ! A.method "post" $ do
+        H.form ! A.id "editChainForm" ! A.method "post" $ do
             H.input ! A.type_ "hidden" ! A.name "table" ! A.value (fromString tableName)
             H.input ! A.type_ "hidden" ! A.name "chain" ! A.value (fromString chainName)
             H.table $
@@ -22,5 +22,3 @@ editChainForm (tableName, chainName) newChainName mesMay =
                         Nothing -> mempty :: Html
                         Just mes ->
                             H.td $ fromString mes
-            H.input ! A.id "check" ! A.name "submit" ! A.type_ "submit" ! A.value "Check"
-            H.input ! A.id "submit" ! A.name "submit" ! A.type_ "submit" ! A.value "Submit"

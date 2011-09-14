@@ -51,10 +51,12 @@ renderChain tableName countType maxCounterDiff refreshString (Chain n p counters
                             ! A.title "Delete chain"
                             ! A.href (fromString $ "/delchain?table="++tableName++"&chain="++n)
                             $ "✘" -- X
-                        H.a ! A.class_ "button"
-                            ! A.title "Edit chain name"
-                            ! A.href (fromString $ "/editchain?table="++tableName++"&chain="++n)
-                            $ "✎" -- e
+                        H.button ! A.class_ "button editChainButton actionButton"
+                                 ! A.title "Edit chain name"
+                                 -- ! A.href (fromString $ "/editchain?table="++tableName++"&chain="++n)
+                                 ! dataAttribute "table" (fromString tableName)
+                                 ! dataAttribute "chain" (fromString n)
+                                 $ "✎" -- e
                     a -> do
                         "Policy: "
                         H.a ! A.href (fromString $ "/editpolicy?table="++tableName++"&chain="++n) $
