@@ -25,6 +25,7 @@ $(document).ready(function(){
         $(".editButton").click(editButtonHandler);
         $(".delButton").click(delButtonHandler);
         $(".insertButton").click(insertButtonHandler);
+        $(".addButton").click(addButtonHandler);
     };
 
     var editButtonHandler = function () {
@@ -119,7 +120,7 @@ $(document).ready(function(){
         var table = this.getAttribute('data-table');
 
         var dialog1;
-        $("#dialog1").html("Delete rule number "+rulePos+" from '"+chain+"' chain in '"+table+"' table.");
+        $("#dialog1").html("Delete rule "+rulePos+" from '"+chain+"' chain in '"+table+"' table?");
 
         dialog1 = $("#dialog1").dialog({
             modal: true,
@@ -249,6 +250,94 @@ $(document).ready(function(){
             },
         });
 
+    };
+
+    var addButtonHandler = function () {
+        var dialog1;
+
+        var chain = this.getAttribute('data-chain');
+        var table = this.getAttribute('data-table');
+
+        $.ajax({
+            url: '/add?table='+table+'&chain='+chain,
+            dataType: 'html',
+            error: function () {
+                alert("Server connection error");
+            },
+            success: function (ans) {
+                $('#dialog').html("");
+                dialog1 = $('#dialog1').dialog({
+                    modal: true,
+                    resizable: false,
+                    buttons: [
+                        {
+                            text: "Check",
+                            click: function () {
+                                var str = $("#editform").serialize();
+                                str = str + "&submit=Check";
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/add",
+                                    data: str,
+                                    error: function () {
+                                        alert('Server connection error');
+                                    },
+                                    success: function (ans) {
+                                        dialog1.html(ans);
+                                        dialog1.dialog("option","width",'auto');
+                                        dialog1.dialog("option","height",'auto');
+                                        dialog1.dialog("option","position","center");
+                                    },
+                                });
+                            },
+                        },
+                        {
+                            text: "Submit",
+                            click: function () {
+                                var str = $("#editform").serialize();
+                                str = str + "&submit=Submit";
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/add",
+                                    data: str,
+                                    error: function () {
+                                        alert('Server connection error');
+                                    },
+                                    success: function (ans) {
+                                        if (ans == "ok" ) {
+                                            dialog1.dialog("destroy");
+                                            // TODO: load only one rule and add it to chain
+                                            $.ajax({
+                                                type: "GET",
+                                                url: '/show/chain?table='+table+'&chain='+chain,
+                                                error: function () {
+                                                    alert('Server connecion error');
+                                                },
+                                                success: function (ans) {
+                                                    $('#chain-table-'+table+'-'+chain).replaceWith(ans);
+                                                    rebuttonActionButtons();
+                                                },
+                                            })
+                                        }
+                                        else {
+                                            dialog1.html(ans);
+                                            dialog1.dialog("option","width",'auto');
+                                            dialog1.dialog("option","height",'auto');
+                                            dialog1.dialog("option","position","center");
+                                        }
+                                    },
+                                });
+                            },
+                        },
+                    ],
+                });
+
+                dialog1.html(ans);
+                dialog1.dialog("option","width",'auto');
+                dialog1.dialog("option","height",'auto');
+                dialog1.dialog("option","position","center");
+            },
+        });
     };
 
     $('body').append('<div id="dialog1"></div>');

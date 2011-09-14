@@ -4,12 +4,10 @@ module IptAdmin.AddPage where
 import Control.Monad.Error
 import Control.Monad.State
 import Happstack.Server.SimpleHTTP
-import Template
 import IptAdmin.EditForm
 import IptAdmin.EditForm.Class
 import IptAdmin.EditForm.Render
 import IptAdmin.EditForm.Utils
-import IptAdmin.Render
 import IptAdmin.System
 import IptAdmin.Types
 import IptAdmin.Utils
@@ -34,8 +32,7 @@ pageHandlerGet = do
 
     (PackedEditForm form) <- nullSelForm tableName chainName
     let userChainNames = getUserChains form chainName table
-    return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-        header tableName $ "Add rule at the end of '" ++ chainName ++ "' chain in '" ++ tableName ++ "' table"
+    return $ buildResponse $ renderHtml $ do
         editFormHtml (tableName, chainName, 0, userChainNames) form Nothing
 
 pageHandlerPost :: IptAdmin Response
@@ -52,8 +49,7 @@ pageHandlerPost = do
 
     let checkResE = editPageProcessParams addFormParams
     case checkResE of
-            Left formMes -> return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-                header tableName $ "Add rule at the end of '" ++ chainName ++ "' chain in '" ++ tableName ++ "' table"
+            Left formMes -> return $ buildResponse $ renderHtml $ do
                 editFormHtml (tableName, chainName, 0, userChainNames) addFormParams $ Just formMes
             Right (options, target, formMes) -> do
                 let (_, options') = runState (mapM_ completeModules options) options
@@ -61,15 +57,13 @@ pageHandlerPost = do
 
                 submit <- getInputString "submit"
                 case submit of
-                    "Check" -> return $ buildResponse $ Template.htmlWrapper $ renderHtml (do
-                        header tableName $ "Add rule at the end of '"
-                                         ++ chainName ++ "' chain in '"
-                                         ++ tableName ++ "' table"
+                    "Check" -> return $ buildResponse $ renderHtml (do
                         editFormHtml (tableName, chainName, 0, userChainNames) addFormParams $ Just formMes
-                        ) ++ printRuleForRun rule
+                        ) -- ++ printRuleForRun rule
                     "Submit" -> do
                         tryChange (appendRule tableName chainName rule)
-                        redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName Nothing
+                        -- redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName Nothing
+                        return $ buildResponse "ok"
                     a -> throwError $ "Wrong value for 'submit' parameter: " ++ a
 
 checkParams :: [Chain] -> String -> IptAdmin ()

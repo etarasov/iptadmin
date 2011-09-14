@@ -116,7 +116,12 @@ renderChain tableName countType maxCounterDiff refreshString (Chain n p counters
         mapM_ (renderRule (tableName, n) countType maxCounterDiff) $ zip [1..] $ zip rs rs'
         H.tr $
             H.td ! A.colspan "7" $
-                H.a ! A.href (fromString $ "/add?table="++tableName++"&chain="++n) $ "Add rule"
+                -- H.a ! A.href (fromString $ "/add?table="++tableName++"&chain="++n) $ "Add rule"
+                H.button ! A.class_ "button addButton bigActionButton"
+                         ! A.title "Add rule"
+                         ! dataAttribute "chain" (fromString n)
+                         ! dataAttribute "table" (fromString tableName)
+                         $ "Add rule"
 
 -- | (Table name, Chain name) -> Counters type -> max counter -> Rule -> Html
 renderRule :: (String, String) -> CountersType -> Integer -> (Int, (Rule, Rule)) -> Html

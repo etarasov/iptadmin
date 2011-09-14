@@ -264,6 +264,23 @@ button.actionButton:hover{
     background-color: #fafafa;
 }
 
+/* Стиль кнопок Add rule, Add chain
+ */
+button.bigActionButton{
+    background-color:#f0f0f0;
+    color: #5b5b5b;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    padding: 0;
+    border: 1px solid;
+    border-color: #b7b7b7;
+    margin-left: 1px;
+}
+
+button.bigActionButton:hover{
+    background-color: #fafafa;
+}
+
 /* Стили элементов jquery */
 
 /*
