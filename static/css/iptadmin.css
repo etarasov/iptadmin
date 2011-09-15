@@ -264,6 +264,14 @@ button.actionButton:hover{
     background-color: #fafafa;
 }
 
+button.disabledButton{
+    color: #cccccc;
+}
+
+button.disabledButton:hover{
+    background-color: #f0f0f0;
+}
+
 /* Стиль кнопок Add rule, Add chain
  */
 button.bigActionButton{

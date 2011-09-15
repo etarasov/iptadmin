@@ -28,6 +28,7 @@ $(document).ready(function(){
         $(".addButton").click(addButtonHandler);
         $(".editChainButton").click(editChainButtonHandler);
         $(".addChainButton").click(addChainButtonHandler);
+        $(".delChainButton").click(delChainButtonHandler);
     };
 
     var ajaxError = function () {
@@ -140,6 +141,7 @@ $(document).ready(function(){
                             type: "POST",
                             url: "/del",
                             data: 'rulePos='+rulePos+'&chain='+chain+'&table='+table,
+                            error: ajaxError,
                             success: function (ans4) {
                                 if (ans4 == "ok") {
                                     dialog1.dialog("destroy");
@@ -163,7 +165,7 @@ $(document).ready(function(){
                 {
                     text: "Cancel",
                     click: function () {
-                        dialog1.dialog("close");
+                        dialog1.dialog("destroy"); // было "close"
                     },
                 },
             ],
@@ -505,6 +507,48 @@ $(document).ready(function(){
                 dialog1.dialog("option","height",'auto');
                 dialog1.dialog("option","position","center");
             },
+        });
+    };
+
+    var delChainButtonHandler = function () {
+        var dialog1;
+
+        var table = this.getAttribute('data-table');
+        var chain = this.getAttribute('data-chain');
+
+        $("#dialog1").html("Delete chain '" + chain + "'?");
+        dialog1 = $("#dialog1").dialog({
+            title: "Del user defined chain",
+            modal: true,
+            resizable: false,
+            buttons: [
+                {
+                    text: "Delete",
+                    click: function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/delchain",
+                            data: 'table='+table+'&chain='+chain,
+                            error: ajaxError,
+                            success: function (ans) {
+                                if (ans == "ok") {
+                                    dialog1.dialog("destroy");
+                                    $('#chain-table-'+table+'-'+chain).remove();
+                                }
+                                else {
+                                    dialog1.html(ans);
+                                }
+                            },
+                        });
+                    },
+                },
+                {
+                    text: "Cancel",
+                    click: function () {
+                        dialog1.dialog("destroy");
+                    },
+                },
+            ],
         });
     };
 

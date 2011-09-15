@@ -70,4 +70,5 @@ pageHandlerPost = do
                                         ++ show linkedChains
                         else do
                             tryChange $ deleteChain tableName chainName
-                            redir $ "/show?table=" ++ tableName
+                            -- redir $ "/show?table=" ++ tableName
+                            return $ buildResponse "ok"
