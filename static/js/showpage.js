@@ -578,6 +578,12 @@ $(document).ready(function(){
                                 });
                             },
                         },
+                        {
+                            text: "Cancel",
+                            click: function () {
+                                dialog1.dialog("destroy");
+                            },
+                        },
                     ],
                 });
                 dialog1.html(ans);

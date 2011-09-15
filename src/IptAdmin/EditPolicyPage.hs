@@ -57,7 +57,8 @@ pageHandlerPost = do
 
     -- 3. Если изменилось, применить изменения
     if newPolicy == policy
-        then redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName Nothing
+        then -- redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName Nothing
+            return $ buildResponse $ "ok:" ++ show newPolicy
         else do
             tryChange (setPolicy tableName chainName newPolicy)
             -- redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName Nothing
