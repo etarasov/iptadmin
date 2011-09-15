@@ -15,7 +15,7 @@ th {
     color: #5b5b5b;
 }
 table, th, td {
-    border: 1px dotted black;
+    border: 1px solid #b7b7b7;
     padding: 5px;
 }
 td.rightAlign {
