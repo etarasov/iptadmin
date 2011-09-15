@@ -29,6 +29,7 @@ $(document).ready(function(){
         $(".editChainButton").click(editChainButtonHandler);
         $(".addChainButton").click(addChainButtonHandler);
         $(".delChainButton").click(delChainButtonHandler);
+        $(".editPolicyButton").click(editPolicyButtonHandler);
     };
 
     var ajaxError = function () {
@@ -53,9 +54,7 @@ $(document).ready(function(){
                                 type: "POST",
                                 url: "/edit",
                                 data: str,
-                                error: function () {
-                                    alert('server connection error');
-                                },
+                                error: ajaxError,
                                 success: function (ans2) {
                                     dialog1.html(ans2);
                                     dialog1.dialog("option","width",'auto');
@@ -74,12 +73,14 @@ $(document).ready(function(){
                                 type: "POST",
                                 url: "/edit",
                                 data: str,
+                                error: ajaxError,
                                 success: function (ans2) {
                                     if (ans2 == "ok") {
                                         dialog1.dialog("destroy");
                                         $.ajax({
                                             type: "GET",
                                             url: '/show/rule?table='+table+'&chain='+chain+'&pos='+rulePos,
+                                            error: ajaxError,
                                             success: function (ans3) {
                                                 $('#rule-tr-'+table+'-'+chain+'-'+rulePos).replaceWith(ans3);
                                                 rebuttonActionButtons();
@@ -182,9 +183,7 @@ $(document).ready(function(){
         $.ajax({
             url: '/insert?table='+table+'&chain='+chain+'&pos='+rulePos,
             dataType: 'html',
-            error: function () {
-                    alert("Server connection error");
-                    },
+            error: ajaxError,
             success: function (ans7) {
                 $('#dialog1').html("");
                 dialog1 = $('#dialog1').dialog({
@@ -200,9 +199,7 @@ $(document).ready(function(){
                                     type: "POST",
                                     url: "/insert",
                                     data: str,
-                                    error: function () {
-                                        alert('server connection error');
-                                    },
+                                    error: ajaxError,
                                     success: function (ans8) {
                                         dialog1.html(ans8);
                                         dialog1.dialog("option","width",'auto');
@@ -549,6 +546,58 @@ $(document).ready(function(){
                     },
                 },
             ],
+        });
+    };
+
+    var editPolicyButtonHandler = function () {
+        var dialog1;
+
+        var chain = this.getAttribute('data-chain');
+        var table = this.getAttribute('data-table');
+
+        $.ajax({
+            url: '/editpolicy?table='+table+'&chain='+chain,
+            dataType: 'html',
+            error: ajaxError,
+            success: function (ans) {
+                $('#dialog1').html("");
+                dialog1 = $('#dialog1').dialog({
+                    modal: true,
+                    resizable: false,
+                    buttons: [
+                        {
+                            text: "Submit",
+                            click: function () {
+                                var str = $("#editPolicyForm").serialize();
+                                str = str + "&submit=Submit",
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/editpolicy",
+                                    data: str,
+                                    error: ajaxError,
+                                    success: function (ans) {
+                                        if (ans.split(':')[0] == "ok") {
+                                            dialog1.dialog("destroy");
+                                            var newPolicy = ans.split(':')[1];
+                                            $('#policy-'+table+'-'+chain).html(newPolicy);
+                                        }
+                                        else {
+                                            dialog1.html(ans);
+                                            dialog1.dialog("option","width",'auto');
+                                            dialog1.dialog("option","height",'auto');
+                                            dialog1.dialog("option","position","center");
+                                        }
+                                    },
+                                });
+                            },
+                        },
+                    ],
+                });
+                dialog1.html(ans);
+                dialog1.dialog("option","width",'auto');
+                dialog1.dialog("option","height",'auto');
+                dialog1.dialog("option","position","center");
+            },
         });
     };
 

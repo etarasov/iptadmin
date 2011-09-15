@@ -34,4 +34,3 @@ editPolicyForm (tableName, chainName) policy = do
                             DROP -> dropRadio ! A.checked "checked"
                             _ -> dropRadio
                         "Drop"
-            H.input ! A.id "submit" ! A.name "submit" ! A.type_ "submit" ! A.value "Submit"

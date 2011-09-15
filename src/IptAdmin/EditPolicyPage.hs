@@ -31,8 +31,7 @@ pageHandlerGet = do
                 PUNDEFINED -> throwError $ "Not builtin chain: " ++ show chain
                 a -> return a
     -- 2. Отрисовка формы
-    return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
-        header tableName $ "Change policy for '" ++ chainName ++ "' chain in '" ++ tableName ++ "' table"
+    return $ buildResponse $ renderHtml $ do
         editPolicyForm (tableName, chainName) policy
 
 
@@ -61,4 +60,5 @@ pageHandlerPost = do
         then redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName Nothing
         else do
             tryChange (setPolicy tableName chainName newPolicy)
-            redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName Nothing
+            -- redir $ "/show?table=" ++ tableName ++ bookmarkForJump chainName Nothing
+            return $ buildResponse $ "ok:" ++ show newPolicy

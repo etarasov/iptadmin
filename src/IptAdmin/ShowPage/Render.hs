@@ -72,9 +72,14 @@ renderChain tableName countType maxCounterDiff refreshString (Chain n p counters
                                      ! dataAttribute "chain" (fromString n)
                                      $ "✘" -- X
                     a -> do
-                        "Policy: "
-                        H.a ! A.href (fromString $ "/editpolicy?table="++tableName++"&chain="++n) $
-                            fromString $ show a
+                        H.button ! A.class_ "button editPolicyButton bigActionButton"
+                                 ! A.title "Change policy"
+                                 ! dataAttribute "table" (fromString tableName)
+                                 ! dataAttribute "chain" (fromString n)
+                                 $ "Policy:"
+                        -- H.a ! A.href (fromString $ "/editpolicy?table="++tableName++"&chain="++n) $
+                        H.span ! A.id (fromString $ "policy-" ++ tableName ++ "-" ++ n)
+                               $ fromString $ show a
                         " "
                         case countType of
                             CTBytes -> do
