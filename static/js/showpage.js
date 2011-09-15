@@ -115,9 +115,7 @@ $(document).ready(function(){
             url: '/edit?table='+table+'&chain='+chain+'&pos='+rulePos,
             dataType: 'html',
             success: loadEditForm,
-            error: function () {
-                    alert("Server connection error");
-                },
+            error: ajaxError,
         });
     };
 
@@ -149,6 +147,7 @@ $(document).ready(function(){
                                     $.ajax({
                                         type: "GET",
                                         url: '/show/chain?table='+table+'&chain='+chain,
+                                        error: ajaxError,
                                         success: function (ans6) {
                                             $('#chain-table-'+table+'-'+chain).replaceWith(ans6);
                                             rebuttonActionButtons();
@@ -218,18 +217,14 @@ $(document).ready(function(){
                                     type: "POST",
                                     url: "/insert",
                                     data: str,
-                                    error: function () {
-                                        alert('server connection error');
-                                    },
+                                    error: ajaxError,
                                     success: function (ans9) {
                                         if (ans9 == "ok") {
                                             dialog1.dialog("destroy");
                                             $.ajax({
                                                 type: "GET",
                                                 url: '/show/chain?table='+table+'&chain='+chain,
-                                                error: function () {
-                                                    alert('server connection error');
-                                                },
+                                                error: ajaxError,
                                                 success: function (ans) {
                                                     $('#chain-table-'+table+'-'+chain).replaceWith(ans);
                                                     rebuttonActionButtons();
@@ -266,9 +261,7 @@ $(document).ready(function(){
         $.ajax({
             url: '/add?table='+table+'&chain='+chain,
             dataType: 'html',
-            error: function () {
-                alert("Server connection error");
-            },
+            error: ajaxError,
             success: function (ans) {
                 $('#dialog').html("");
                 dialog1 = $('#dialog1').dialog({
@@ -284,9 +277,7 @@ $(document).ready(function(){
                                     type: "POST",
                                     url: "/add",
                                     data: str,
-                                    error: function () {
-                                        alert('Server connection error');
-                                    },
+                                    error: ajaxError,
                                     success: function (ans) {
                                         dialog1.html(ans);
                                         dialog1.dialog("option","width",'auto');
@@ -305,9 +296,7 @@ $(document).ready(function(){
                                     type: "POST",
                                     url: "/add",
                                     data: str,
-                                    error: function () {
-                                        alert('Server connection error');
-                                    },
+                                    error: ajaxError,
                                     success: function (ans) {
                                         if (ans == "ok" ) {
                                             dialog1.dialog("destroy");
@@ -315,9 +304,7 @@ $(document).ready(function(){
                                             $.ajax({
                                                 type: "GET",
                                                 url: '/show/chain?table='+table+'&chain='+chain,
-                                                error: function () {
-                                                    alert('Server connecion error');
-                                                },
+                                                error: ajaxError,
                                                 success: function (ans) {
                                                     $('#chain-table-'+table+'-'+chain).replaceWith(ans);
                                                     rebuttonActionButtons();
