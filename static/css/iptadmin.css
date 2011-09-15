@@ -143,6 +143,7 @@ div.loginForm2 {
     border: 1px solid #666666;
     border-radius: 15px;
     -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
     padding: 15px;
     text-align: center;
 }
@@ -254,6 +255,7 @@ button.actionButton{
     color: #5b5b5b;
     border-radius: 5px;
     -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
     padding: 0;
     border: 1px solid;
     border-color: #b7b7b7;
@@ -291,6 +293,7 @@ button.bigActionButton{
     color: #5b5b5b;
     border-radius: 5px;
     -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
     padding: 2px;
     border: 1px solid;
     border-color: #b7b7b7;
