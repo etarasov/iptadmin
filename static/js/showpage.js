@@ -42,6 +42,7 @@ $(document).ready(function(){
         var loadEditForm = function (ans) {
 
             dialog1 = $('#dialog1').dialog({
+                title: "Edit rule "+rulePos,
                 modal: true,
                 resizable: false,
                 buttons: [
@@ -186,6 +187,7 @@ $(document).ready(function(){
             success: function (ans7) {
                 $('#dialog1').html("");
                 dialog1 = $('#dialog1').dialog({
+                    title: 'Insert rule in position '+rulePos,
                     modal: true,
                     resizable: false,
                     buttons: [
@@ -265,6 +267,7 @@ $(document).ready(function(){
             success: function (ans) {
                 $('#dialog').html("");
                 dialog1 = $('#dialog1').dialog({
+                    title: 'Append rule',
                     modal: true,
                     resizable: false,
                     buttons: [
@@ -549,6 +552,7 @@ $(document).ready(function(){
             success: function (ans) {
                 $('#dialog1').html("");
                 dialog1 = $('#dialog1').dialog({
+                    title: 'Select policy',
                     modal: true,
                     resizable: false,
                     buttons: [
