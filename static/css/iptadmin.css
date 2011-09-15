@@ -11,8 +11,8 @@ table {
     background-color: #ffffff;
 }
 th {
-    background-color: #b7b7b7;
-    color: #f7f7f7;
+    background-color: #D7D7D7;
+    color: #5b5b5b;
 }
 table, th, td {
     border: 1px dotted black;
@@ -261,7 +261,13 @@ button.actionButton{
 }
 
 button.actionButton:hover{
+    color: #222222;
     background-color: #fafafa;
+}
+
+button.actionButton.active{
+    color: black;
+    background-color: #ffffff;
 }
 
 button.disabledButton{
@@ -270,6 +276,12 @@ button.disabledButton{
 
 button.disabledButton:hover{
     background-color: #f0f0f0;
+    color: #cccccc;
+}
+
+button.disabledButton:active{
+    background-color: #f0f0f0;
+    color: #cccccc;
 }
 
 /* Стиль кнопок Add rule, Add chain

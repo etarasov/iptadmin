@@ -16,35 +16,33 @@ pageHandlers = msum [ dirs "css/iptadmin.css" $ returnCss $ $(embedFile "static/
                     , dirs "js/showpage.js" $ returnJs $ $(embedFile "static/js/showpage.js")
                     , dirs "js/jquery-1.6.2.min.js" $ returnJs jquery162minjs
                     , dirs "js/jquery-ui-1.8.16.custom.min.js" $ returnJs jqueryUi1816customMinJs
-                    , dirs "css/humanity/jquery-ui-1.8.16.custom.css" $ returnCss jqueryUi1816customCss
-                    , dirs "css/humanity/images/ui-bg_flat_75_aaaaaa_40x100.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-bg_flat_75_aaaaaa_40x100.png")
-                    , dirs "css/humanity/images/ui-bg_glass_100_f5f0e5_1x400.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-bg_glass_100_f5f0e5_1x400.png")
-                    , dirs "css/humanity/images/ui-bg_glass_25_cb842e_1x400.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-bg_glass_25_cb842e_1x400.png")
-                    , dirs "css/humanity/images/ui-bg_glass_70_ede4d4_1x400.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-bg_glass_70_ede4d4_1x400.png")
-                    , dirs "css/humanity/images/ui-bg_highlight-hard_100_f4f0ec_1x100.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-bg_highlight-hard_100_f4f0ec_1x100.png")
-                    , dirs "css/humanity/images/ui-bg_highlight-hard_65_fee4bd_1x100.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-bg_highlight-hard_65_fee4bd_1x100.png")
-                    , dirs "css/humanity/images/ui-bg_highlight-hard_75_f5f5b5_1x100.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-bg_highlight-hard_75_f5f5b5_1x100.png")
-                    , dirs "css/humanity/images/ui-bg_inset-soft_100_f4f0ec_1x100.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-bg_inset-soft_100_f4f0ec_1x100.png")
-                    , dirs "css/humanity/images/ui-icons_c47a23_256x240.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-icons_c47a23_256x240.png")
-                    , dirs "css/humanity/images/ui-icons_cb672b_256x240.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-icons_cb672b_256x240.png")
-                    , dirs "css/humanity/images/ui-icons_f08000_256x240.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-icons_f08000_256x240.png")
-                    , dirs "css/humanity/images/ui-icons_f35f07_256x240.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-icons_f35f07_256x240.png")
-                    , dirs "css/humanity/images/ui-icons_ff7519_256x240.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-icons_ff7519_256x240.png")
-                    , dirs "css/humanity/images/ui-icons_ffffff_256x240.png" $ returnPng $
-                        $(embedFile "static/css/humanity/images/ui-icons_ffffff_256x240.png")
+                    , dirs "css/iptadmin-theme/jquery-ui-1.8.16.custom.css" $ returnCss jqueryUi1816customCss
+                    , dirs "css/iptadmin-theme/images/ui-bg_flat_0_aaaaaa_40x100.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-bg_flat_0_aaaaaa_40x100.png")
+                    , dirs "css/iptadmin-theme/images/ui-bg_flat_75_ffffff_40x100.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-bg_flat_75_ffffff_40x100.png")
+                    , dirs "css/iptadmin-theme/images/ui-bg_glass_55_fbf9ee_1x400.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-bg_glass_55_fbf9ee_1x400.png")
+                    , dirs "css/iptadmin-theme/images/ui-bg_glass_65_ffffff_1x400.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-bg_glass_65_ffffff_1x400.png")
+                    , dirs "css/iptadmin-theme/images/ui-bg_glass_75_f0f0f0_1x400.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-bg_glass_75_f0f0f0_1x400.png")
+                    , dirs "css/iptadmin-theme/images/ui-bg_glass_75_fafafa_1x400.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-bg_glass_75_fafafa_1x400.png")
+                    , dirs "css/iptadmin-theme/images/ui-bg_glass_95_fef1ec_1x400.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-bg_glass_95_fef1ec_1x400.png")
+                    , dirs "css/iptadmin-theme/images/ui-bg_highlight-hard_75_d7d7d7_1x100.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-bg_highlight-hard_75_d7d7d7_1x100.png")
+                    , dirs "css/iptadmin-theme/images/ui-icons_000000_256x240.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-icons_000000_256x240.png")
+                    , dirs "css/iptadmin-theme/images/ui-icons_222222_256x240.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-icons_222222_256x240.png")
+                    , dirs "css/iptadmin-theme/images/ui-icons_2e83ff_256x240.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-icons_2e83ff_256x240.png")
+                    , dirs "css/iptadmin-theme/images/ui-icons_5b5b5b_256x240.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-icons_5b5b5b_256x240.png")
+                    , dirs "css/iptadmin-theme/images/ui-icons_cd0a0a_256x240.png" $ returnPng $
+                        $(embedFile "static/css/iptadmin-theme/images/ui-icons_cd0a0a_256x240.png")
                     ]
 
 returnJs :: B.ByteString -> IptAdminAuth Response
@@ -95,4 +93,4 @@ jqueryUi1816customMinJs :: B.ByteString
 jqueryUi1816customMinJs = $(embedFile "static/js/jquery-ui-1.8.16.custom.min.js")
 
 jqueryUi1816customCss :: B.ByteString
-jqueryUi1816customCss = $(embedFile "static/css/humanity/jquery-ui-1.8.16.custom.css")
+jqueryUi1816customCss = $(embedFile "static/css/iptadmin-theme/jquery-ui-1.8.16.custom.css")
