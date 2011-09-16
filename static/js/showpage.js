@@ -49,64 +49,68 @@ $(document).ready(function(){
 
         var loadEditForm = function (ans) {
 
-            dialog1 = $('#dialog1').dialog({
-                title: "Edit rule "+rulePos,
-                modal: true,
-                resizable: false,
-                buttons: [
-                    {
-                        text: "Check",
-                        click: function () {
-                            var str = $("#editform").serialize();
-                            str = str + "&submit=Check";
-                            $.ajax({
-                                type: "POST",
-                                url: "/edit",
-                                data: str,
-                                error: ajaxError,
-                                success: function (ans2) {
+            var dialogButtons = [
+                {
+                    text: "Check",
+                    click: function () {
+                        var str = $("#editform").serialize();
+                        str = str + "&submit=Check";
+                        $.ajax({
+                            type: "POST",
+                            url: "/edit",
+                            data: str,
+                            error: ajaxError,
+                            success: function (ans2) {
+                                dialog1.html(ans2);
+                                dialog1.dialog("option","width",'auto');
+                                dialog1.dialog("option","height",'auto');
+                                dialog1.dialog("option","position","center");
+                            },
+                        });
+                    },
+                },
+                {
+                    text: "Submit",
+                    click: function () {
+                        dialog1.dialog( "option", "buttons", []);
+                        var str = $("#editform").serialize();
+                        str = str + "&submit=Submit";
+                        $.ajax({
+                            type: "POST",
+                            url: "/edit",
+                            data: str,
+                            error: ajaxError,
+                            success: function (ans2) {
+                                dialog1.dialog("option", "buttons", dialogButtons);
+                                if (ans2 == "ok") {
+                                    dialog1.dialog("destroy");
+                                    $.ajax({
+                                        type: "GET",
+                                        url: '/show/rule?table='+table+'&chain='+chain+'&pos='+rulePos,
+                                        error: ajaxError,
+                                        success: function (ans3) {
+                                            $('#rule-tr-'+table+'-'+chain+'-'+rulePos).replaceWith(ans3);
+                                            rebuttonActionButtons();
+                                        },
+                                    });
+                                }
+                                else {
                                     dialog1.html(ans2);
                                     dialog1.dialog("option","width",'auto');
                                     dialog1.dialog("option","height",'auto');
                                     dialog1.dialog("option","position","center");
-                                },
-                            });
-                        },
+                                }
+                            },
+                        });
                     },
-                    {
-                        text: "Submit",
-                        click: function () {
-                            var str = $("#editform").serialize();
-                            str = str + "&submit=Submit";
-                            $.ajax({
-                                type: "POST",
-                                url: "/edit",
-                                data: str,
-                                error: ajaxError,
-                                success: function (ans2) {
-                                    if (ans2 == "ok") {
-                                        dialog1.dialog("destroy");
-                                        $.ajax({
-                                            type: "GET",
-                                            url: '/show/rule?table='+table+'&chain='+chain+'&pos='+rulePos,
-                                            error: ajaxError,
-                                            success: function (ans3) {
-                                                $('#rule-tr-'+table+'-'+chain+'-'+rulePos).replaceWith(ans3);
-                                                rebuttonActionButtons();
-                                            },
-                                        });
-                                    }
-                                    else {
-                                        dialog1.html(ans2);
-                                        dialog1.dialog("option","width",'auto');
-                                        dialog1.dialog("option","height",'auto');
-                                        dialog1.dialog("option","position","center");
-                                    }
-                                },
-                            });
-                        },
-                    },
-                ],
+                },
+            ]
+
+            dialog1 = $('#dialog1').dialog({
+                title: "Edit rule "+rulePos,
+                modal: true,
+                resizable: false,
+                buttons: dialogButtons,
                 //close: closeDialog,
             });
             //alert('2');
@@ -134,49 +138,53 @@ $(document).ready(function(){
         var chain = this.getAttribute('data-chain');
         var table = this.getAttribute('data-table');
 
+        var dialogButtons = [
+            {
+                text: "Delete",
+                click: function () {
+                    dialog1.dialog( "option", "buttons", []);
+                    $.ajax({
+                        type: "POST",
+                        url: "/del",
+                        data: 'rulePos='+rulePos+'&chain='+chain+'&table='+table,
+                        error: ajaxError,
+                        success: function (ans4) {
+                            dialog1.dialog("option", "buttons", dialogButtons);
+                            if (ans4 == "ok") {
+                                dialog1.dialog("destroy");
+                                $.ajax({
+                                    type: "GET",
+                                    url: '/show/chain?table='+table+'&chain='+chain,
+                                    error: ajaxError,
+                                    success: function (ans6) {
+                                        $('#chain-table-'+table+'-'+chain).replaceWith(ans6);
+                                        rebuttonActionButtons();
+                                    },
+                                });
+                                // alert("rule was deleted");
+                            }
+                            else {
+                                alert("rule deletion error");
+                            };
+                        },
+                    });
+                },
+            },
+            {
+                text: "Cancel",
+                click: function () {
+                    dialog1.dialog("destroy"); // было "close"
+                },
+            },
+        ]
+
         $("#dialog1").html("Delete rule "+rulePos+" from '"+chain+"' chain in '"+table+"' table?");
 
         dialog1 = $("#dialog1").dialog({
             modal: true,
             resizable: false,
             title: "Delete rule",
-            buttons: [
-                {
-                    text: "Delete",
-                    click: function () {
-                        $.ajax({
-                            type: "POST",
-                            url: "/del",
-                            data: 'rulePos='+rulePos+'&chain='+chain+'&table='+table,
-                            error: ajaxError,
-                            success: function (ans4) {
-                                if (ans4 == "ok") {
-                                    dialog1.dialog("destroy");
-                                    $.ajax({
-                                        type: "GET",
-                                        url: '/show/chain?table='+table+'&chain='+chain,
-                                        error: ajaxError,
-                                        success: function (ans6) {
-                                            $('#chain-table-'+table+'-'+chain).replaceWith(ans6);
-                                            rebuttonActionButtons();
-                                        },
-                                    });
-                                    // alert("rule was deleted");
-                                }
-                                else {
-                                    alert("rule deletion error");
-                                };
-                            },
-                        });
-                    },
-                },
-                {
-                    text: "Cancel",
-                    click: function () {
-                        dialog1.dialog("destroy"); // было "close"
-                    },
-                },
-            ],
+            buttons: dialogButtons,
         });
     };
 
@@ -191,65 +199,70 @@ $(document).ready(function(){
             dataType: 'html',
             error: ajaxError,
             success: function (ans7) {
+
+                var dialogButtons = [
+                    {
+                        text: "Check",
+                        click: function () {
+                            var str = $("#editform").serialize();
+                            str = str + "&submit=Check";
+                            $.ajax({
+                                type: "POST",
+                                url: "/insert",
+                                data: str,
+                                error: ajaxError,
+                                success: function (ans8) {
+                                    dialog1.html(ans8);
+                                    dialog1.dialog("option","width",'auto');
+                                    dialog1.dialog("option","height",'auto');
+                                    dialog1.dialog("option","position","center");
+                                },
+                            });
+                        },
+                    },
+                    {
+                        text: "Submit",
+                        click: function () {
+                            dialog1.dialog("option", "buttons", []);
+                            var str = $("#editform").serialize();
+                            str = str + "&submit=Submit";
+                            $.ajax({
+                                type: "POST",
+                                url: "/insert",
+                                data: str,
+                                error: ajaxError,
+                                success: function (ans9) {
+                                    dialog1.dialog("option", "buttons", dialogButtons);
+                                    if (ans9 == "ok") {
+                                        dialog1.dialog("destroy");
+                                        $.ajax({
+                                            type: "GET",
+                                            url: '/show/chain?table='+table+'&chain='+chain,
+                                            error: ajaxError,
+                                            success: function (ans) {
+                                                $('#chain-table-'+table+'-'+chain).replaceWith(ans);
+                                                rebuttonActionButtons();
+                                            },
+                                        });
+                                    }
+                                    else {
+                                        dialog1.html(ans2);
+                                        dialog1.dialog("option","width",'auto');
+                                        dialog1.dialog("option","height",'auto');
+                                        dialog1.dialog("option","position","center");
+                                    };
+                                },
+                            });
+                        },
+                    },
+                ]
+
                 $('#dialog1').html("");
                 dialog1 = $('#dialog1').dialog({
                     title: 'Insert rule in position '+rulePos,
                     modal: true,
                     resizable: false,
-                    buttons: [
-                        {
-                            text: "Check",
-                            click: function () {
-                                var str = $("#editform").serialize();
-                                str = str + "&submit=Check";
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/insert",
-                                    data: str,
-                                    error: ajaxError,
-                                    success: function (ans8) {
-                                        dialog1.html(ans8);
-                                        dialog1.dialog("option","width",'auto');
-                                        dialog1.dialog("option","height",'auto');
-                                        dialog1.dialog("option","position","center");
-                                    },
-                                });
-                            },
-                        },
-                        {
-                            text: "Submit",
-                            click: function () {
-                                var str = $("#editform").serialize();
-                                str = str + "&submit=Submit";
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/insert",
-                                    data: str,
-                                    error: ajaxError,
-                                    success: function (ans9) {
-                                        if (ans9 == "ok") {
-                                            dialog1.dialog("destroy");
-                                            $.ajax({
-                                                type: "GET",
-                                                url: '/show/chain?table='+table+'&chain='+chain,
-                                                error: ajaxError,
-                                                success: function (ans) {
-                                                    $('#chain-table-'+table+'-'+chain).replaceWith(ans);
-                                                    rebuttonActionButtons();
-                                                },
-                                            });
-                                        }
-                                        else {
-                                            dialog1.html(ans2);
-                                            dialog1.dialog("option","width",'auto');
-                                            dialog1.dialog("option","height",'auto');
-                                            dialog1.dialog("option","position","center");
-                                        };
-                                    },
-                                });
-                            },
-                        },
-                    ],
+                    buttons: dialogButtons,
                 });
                 dialog1.html(ans7);
                 dialog1.dialog("option","width",'auto');
@@ -270,66 +283,71 @@ $(document).ready(function(){
             dataType: 'html',
             error: ajaxError,
             success: function (ans) {
+
+                var dialogButtons = [
+                    {
+                        text: "Check",
+                        click: function () {
+                            var str = $("#editform").serialize();
+                            str = str + "&submit=Check";
+                            $.ajax({
+                                type: "POST",
+                                url: "/add",
+                                data: str,
+                                error: ajaxError,
+                                success: function (ans) {
+                                    dialog1.html(ans);
+                                    dialog1.dialog("option","width",'auto');
+                                    dialog1.dialog("option","height",'auto');
+                                    dialog1.dialog("option","position","center");
+                                },
+                            });
+                        },
+                    },
+                    {
+                        text: "Submit",
+                        click: function () {
+                            dialog1.dialog("option", "buttons", []);
+                            var str = $("#editform").serialize();
+                            str = str + "&submit=Submit";
+                            $.ajax({
+                                type: "POST",
+                                url: "/add",
+                                data: str,
+                                error: ajaxError,
+                                success: function (ans) {
+                                    dialog1.dialog("option", "buttons", dialogButtons);
+                                    if (ans == "ok" ) {
+                                        dialog1.dialog("destroy");
+                                        // TODO: load only one rule and add it to chain
+                                        $.ajax({
+                                            type: "GET",
+                                            url: '/show/chain?table='+table+'&chain='+chain,
+                                            error: ajaxError,
+                                            success: function (ans) {
+                                                $('#chain-table-'+table+'-'+chain).replaceWith(ans);
+                                                rebuttonActionButtons();
+                                            },
+                                        })
+                                    }
+                                    else {
+                                        dialog1.html(ans);
+                                        dialog1.dialog("option","width",'auto');
+                                        dialog1.dialog("option","height",'auto');
+                                        dialog1.dialog("option","position","center");
+                                    }
+                                },
+                            });
+                        },
+                    },
+                ]
+
                 $('#dialog').html("");
                 dialog1 = $('#dialog1').dialog({
                     title: 'Append rule',
                     modal: true,
                     resizable: false,
-                    buttons: [
-                        {
-                            text: "Check",
-                            click: function () {
-                                var str = $("#editform").serialize();
-                                str = str + "&submit=Check";
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/add",
-                                    data: str,
-                                    error: ajaxError,
-                                    success: function (ans) {
-                                        dialog1.html(ans);
-                                        dialog1.dialog("option","width",'auto');
-                                        dialog1.dialog("option","height",'auto');
-                                        dialog1.dialog("option","position","center");
-                                    },
-                                });
-                            },
-                        },
-                        {
-                            text: "Submit",
-                            click: function () {
-                                var str = $("#editform").serialize();
-                                str = str + "&submit=Submit";
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/add",
-                                    data: str,
-                                    error: ajaxError,
-                                    success: function (ans) {
-                                        if (ans == "ok" ) {
-                                            dialog1.dialog("destroy");
-                                            // TODO: load only one rule and add it to chain
-                                            $.ajax({
-                                                type: "GET",
-                                                url: '/show/chain?table='+table+'&chain='+chain,
-                                                error: ajaxError,
-                                                success: function (ans) {
-                                                    $('#chain-table-'+table+'-'+chain).replaceWith(ans);
-                                                    rebuttonActionButtons();
-                                                },
-                                            })
-                                        }
-                                        else {
-                                            dialog1.html(ans);
-                                            dialog1.dialog("option","width",'auto');
-                                            dialog1.dialog("option","height",'auto');
-                                            dialog1.dialog("option","position","center");
-                                        }
-                                    },
-                                });
-                            },
-                        },
-                    ],
+                    buttons: dialogButtons,
                 });
 
                 dialog1.html(ans);
@@ -350,67 +368,72 @@ $(document).ready(function(){
             dataType: 'html',
             error: ajaxError,
             success: function (ans) {
+
+                var dialogButtons = [
+                    {
+                        text: "Check",
+                        click: function () {
+                            var str = $('#editChainForm').serialize();
+                            str = str + '&submit=Check';
+                            $.ajax({
+                                type: "POST",
+                                url: "/editchain",
+                                data: str,
+                                error: ajaxError,
+                                success: function (ans) {
+                                    dialog1.html(ans);
+                                    dialog1.dialog("option","width",'auto');
+                                    dialog1.dialog("option","height",'auto');
+                                    dialog1.dialog("option","position","center");
+                                },
+                            });
+                        },
+                    },
+                    {
+                        text: "Submit",
+                        click: function () {
+                            dialog1.dialog("option", "buttons", []);
+                            var str = $('#editChainForm').serialize();
+                            str = str + '&submit=Submit';
+                            $.ajax({
+                                type: "POST",
+                                url: "/editchain",
+                                data: str,
+                                error: ajaxError,
+                                success: function (ans) {
+                                    dialog1.dialog("option", "buttons", dialogButtons);
+                                    if (ans.split(':')[0] == "ok") {
+                                        // "ok:NewChainName
+                                        newChain = ans.split(':')[1];
+                                        dialog1.dialog("destroy");
+                                        $.ajax({
+                                            type: "GET",
+                                            url: '/show/chain?table='+table+'&chain='+newChain,
+                                            error: ajaxError,
+                                            success: function (ans) {
+                                                $('#chain-table-'+table+'-'+chain).replaceWith(ans);
+                                                rebuttonActionButtons();
+                                            },
+                                        });
+                                    }
+                                    else {
+                                        dialog1.html(ans);
+                                        dialog1.dialog("option","width",'auto');
+                                        dialog1.dialog("option","height",'auto');
+                                        dialog1.dialog("option","position","center");
+                                    }
+                                },
+                            });
+                        },
+                    },
+                ]
+
                 $('#dialog').html("");
                 dialog1 = $('#dialog1').dialog({
                     title: "Edit chain name",
                     modal: true,
                     resizable: false,
-                    buttons: [
-                        {
-                            text: "Check",
-                            click: function () {
-                                var str = $('#editChainForm').serialize();
-                                str = str + '&submit=Check';
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/editchain",
-                                    data: str,
-                                    error: ajaxError,
-                                    success: function (ans) {
-                                        dialog1.html(ans);
-                                        dialog1.dialog("option","width",'auto');
-                                        dialog1.dialog("option","height",'auto');
-                                        dialog1.dialog("option","position","center");
-                                    },
-                                });
-                            },
-                        },
-                        {
-                            text: "Submit",
-                            click: function () {
-                                var str = $('#editChainForm').serialize();
-                                str = str + '&submit=Submit';
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/editchain",
-                                    data: str,
-                                    error: ajaxError,
-                                    success: function (ans) {
-                                        if (ans.split(':')[0] == "ok") {
-                                            // "ok:NewChainName
-                                            newChain = ans.split(':')[1];
-                                            dialog1.dialog("destroy");
-                                            $.ajax({
-                                                type: "GET",
-                                                url: '/show/chain?table='+table+'&chain='+newChain,
-                                                error: ajaxError,
-                                                success: function (ans) {
-                                                    $('#chain-table-'+table+'-'+chain).replaceWith(ans);
-                                                    rebuttonActionButtons();
-                                                },
-                                            });
-                                        }
-                                        else {
-                                            dialog1.html(ans);
-                                            dialog1.dialog("option","width",'auto');
-                                            dialog1.dialog("option","height",'auto');
-                                            dialog1.dialog("option","position","center");
-                                        }
-                                    },
-                                });
-                            },
-                        },
-                    ],
+                    buttons: dialogButtons,
                 });
 
                 dialog1.html(ans);
@@ -430,67 +453,72 @@ $(document).ready(function(){
             dataType: 'html',
             error: ajaxError,
             success: function (ans) {
+
+                var dialogButtons = [
+                    {
+                        text: "Check",
+                        click: function () {
+                            var str=$('#editChainForm').serialize();
+                            str = str + '&submit=Check';
+                            $.ajax({
+                                type: "POST",
+                                url: "/addchain",
+                                data: str,
+                                error: ajaxError,
+                                success: function (ans) {
+                                    dialog1.html(ans);
+                                    dialog1.dialog("option","width",'auto');
+                                    dialog1.dialog("option","height",'auto');
+                                    dialog1.dialog("option","position","center");
+                                },
+                            });
+                        },
+                    },
+                    {
+                        text: "Submit",
+                        click: function () {
+                            dialog1.dialog("option", "buttons", []);
+                            var str = $('#editChainForm').serialize();
+                            str = str + '&submit=Submit';
+                            $.ajax({
+                                type: "POST",
+                                url: "/addchain",
+                                data: str,
+                                error: ajaxError,
+                                success: function (ans) {
+                                    dialog1.dialog("option", "buttons", dialogButtons);
+                                    if (ans.split(':')[0] == "ok") {
+                                        newChain = ans.split(':')[1];
+                                        dialog1.dialog("destroy");
+                                        $.ajax({
+                                            type: "GET",
+                                            url: '/show/chain?table='+table+'&chain='+newChain,
+                                            error: ajaxError,
+                                            success: function (ans) {
+                                                // TODO: добавление новой цепочки в таблицу
+                                                $('#addChainButton').before(ans);
+                                                rebuttonActionButtons();
+                                            },
+                                        });
+                                    }
+                                    else {
+                                        dialog1.html(ans);
+                                        dialog1.dialog("option","width",'auto');
+                                        dialog1.dialog("option","height",'auto');
+                                        dialog1.dialog("option","position","center");
+                                    }
+                                },
+                            });
+                        },
+                    },
+                ]
+
                 $('#dialog').html("");
                 dialog1 = $("#dialog1").dialog({
                     title: "Add user defined chain",
                     modal: true,
                     resizable: false,
-                    buttons: [
-                        {
-                            text: "Check",
-                            click: function () {
-                                var str=$('#editChainForm').serialize();
-                                str = str + '&submit=Check';
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/addchain",
-                                    data: str,
-                                    error: ajaxError,
-                                    success: function (ans) {
-                                        dialog1.html(ans);
-                                        dialog1.dialog("option","width",'auto');
-                                        dialog1.dialog("option","height",'auto');
-                                        dialog1.dialog("option","position","center");
-                                    },
-                                });
-                            },
-                        },
-                        {
-                            text: "Submit",
-                            click: function () {
-                                var str = $('#editChainForm').serialize();
-                                str = str + '&submit=Submit';
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/addchain",
-                                    data: str,
-                                    error: ajaxError,
-                                    success: function (ans) {
-                                        if (ans.split(':')[0] == "ok") {
-                                            newChain = ans.split(':')[1];
-                                            dialog1.dialog("destroy");
-                                            $.ajax({
-                                                type: "GET",
-                                                url: '/show/chain?table='+table+'&chain='+newChain,
-                                                error: ajaxError,
-                                                success: function (ans) {
-                                                    // TODO: добавление новой цепочки в таблицу
-                                                    $('#addChainButton').before(ans);
-                                                    rebuttonActionButtons();
-                                                },
-                                            });
-                                        }
-                                        else {
-                                            dialog1.html(ans);
-                                            dialog1.dialog("option","width",'auto');
-                                            dialog1.dialog("option","height",'auto');
-                                            dialog1.dialog("option","position","center");
-                                        }
-                                    },
-                                });
-                            },
-                        },
-                    ],
+                    buttons: dialogButtons,
                 });
                 dialog1.html(ans);
                 dialog1.dialog("option","width",'auto');
@@ -505,21 +533,18 @@ $(document).ready(function(){
         var table = this.getAttribute('data-table');
         var chain = this.getAttribute('data-chain');
 
-        $("#dialog1").html("Delete chain '" + chain + "'?");
-        dialog1 = $("#dialog1").dialog({
-            title: "Del user defined chain",
-            modal: true,
-            resizable: false,
-            buttons: [
+        var dialogButtons = [
                 {
                     text: "Delete",
                     click: function () {
+                        dialog1.dialog("option", "buttons", []);
                         $.ajax({
                             type: "POST",
                             url: "/delchain",
                             data: 'table='+table+'&chain='+chain,
                             error: ajaxError,
                             success: function (ans) {
+                                dialog1.dialog("option", "buttons", dialogButtons);
                                 if (ans == "ok") {
                                     dialog1.dialog("destroy");
                                     $('#chain-table-'+table+'-'+chain).remove();
@@ -537,7 +562,14 @@ $(document).ready(function(){
                         dialog1.dialog("destroy");
                     },
                 },
-            ],
+            ]
+
+        $("#dialog1").html("Delete chain '" + chain + "'?");
+        dialog1 = $("#dialog1").dialog({
+            title: "Del user defined chain",
+            modal: true,
+            resizable: false,
+            buttons: dialogButtons,
         });
     };
 
@@ -551,45 +583,50 @@ $(document).ready(function(){
             dataType: 'html',
             error: ajaxError,
             success: function (ans) {
+
+                var dialogButtons = [
+                    {
+                        text: "Submit",
+                        click: function () {
+                            dialog1.dialog("option", "buttons", []);
+                            var str = $("#editPolicyForm").serialize();
+                            str = str + "&submit=Submit",
+                            $.ajax({
+                                type: "POST",
+                                url: "/editpolicy",
+                                data: str,
+                                error: ajaxError,
+                                success: function (ans) {
+                                    dialog1.dialog("option", "buttons", dialogButtons);
+                                    if (ans.split(':')[0] == "ok") {
+                                        dialog1.dialog("destroy");
+                                        var newPolicy = ans.split(':')[1];
+                                        $('#policy-'+table+'-'+chain).html(newPolicy);
+                                    }
+                                    else {
+                                        dialog1.html(ans);
+                                        dialog1.dialog("option","width",'auto');
+                                        dialog1.dialog("option","height",'auto');
+                                        dialog1.dialog("option","position","center");
+                                    }
+                                },
+                            });
+                        },
+                    },
+                    {
+                        text: "Cancel",
+                        click: function () {
+                            dialog1.dialog("destroy");
+                        },
+                    },
+                ]
+
                 $('#dialog1').html("");
                 dialog1 = $('#dialog1').dialog({
                     title: 'Select policy',
                     modal: true,
                     resizable: false,
-                    buttons: [
-                        {
-                            text: "Submit",
-                            click: function () {
-                                var str = $("#editPolicyForm").serialize();
-                                str = str + "&submit=Submit",
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/editpolicy",
-                                    data: str,
-                                    error: ajaxError,
-                                    success: function (ans) {
-                                        if (ans.split(':')[0] == "ok") {
-                                            dialog1.dialog("destroy");
-                                            var newPolicy = ans.split(':')[1];
-                                            $('#policy-'+table+'-'+chain).html(newPolicy);
-                                        }
-                                        else {
-                                            dialog1.html(ans);
-                                            dialog1.dialog("option","width",'auto');
-                                            dialog1.dialog("option","height",'auto');
-                                            dialog1.dialog("option","position","center");
-                                        }
-                                    },
-                                });
-                            },
-                        },
-                        {
-                            text: "Cancel",
-                            click: function () {
-                                dialog1.dialog("destroy");
-                            },
-                        },
-                    ],
+                    buttons: dialogButtons,
                 });
                 dialog1.html(ans);
                 dialog1.dialog("option","width",'auto');
