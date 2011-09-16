@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    var dialog1;
     var rebuttonActionButtons = function () {
         /*
         $(".editButton").button({
@@ -32,12 +33,19 @@ $(document).ready(function(){
         $(".editPolicyButton").click(editPolicyButtonHandler);
     };
 
-    var ajaxError = function () {
-        alert('Server connection error');
+    var ajaxError = function (x, t, m) {
+        dialog1.dialog("destroy");
+        if (t === "timeout") {
+            alert('Server connection error. Possibly you have blocked yourself. Try to wait 30 seconds.');
+        }
+        else {
+            alert('Server connection error.');
+        }
     };
 
+    var aTimeout = 4000;
+
     var editButtonHandler = function () {
-        var dialog1;
 
         var loadEditForm = function (ans) {
 
@@ -126,7 +134,6 @@ $(document).ready(function(){
         var chain = this.getAttribute('data-chain');
         var table = this.getAttribute('data-table');
 
-        var dialog1;
         $("#dialog1").html("Delete rule "+rulePos+" from '"+chain+"' chain in '"+table+"' table?");
 
         dialog1 = $("#dialog1").dialog({
@@ -174,7 +181,6 @@ $(document).ready(function(){
     };
 
     var insertButtonHandler = function () {
-        var dialog1;
 
         var rulePos = this.getAttribute('data-rulePos');
         var chain = this.getAttribute('data-chain');
@@ -255,7 +261,6 @@ $(document).ready(function(){
     };
 
     var addButtonHandler = function () {
-        var dialog1;
 
         var chain = this.getAttribute('data-chain');
         var table = this.getAttribute('data-table');
@@ -336,7 +341,6 @@ $(document).ready(function(){
     };
 
     var editChainButtonHandler = function () {
-        var dialog1;
 
         var chain = this.getAttribute('data-chain');
         var table = this.getAttribute('data-table');
@@ -418,7 +422,6 @@ $(document).ready(function(){
     };
 
     var addChainButtonHandler = function () {
-        var dialog1;
 
         var table = this.getAttribute('data-table');
 
@@ -498,7 +501,6 @@ $(document).ready(function(){
     };
 
     var delChainButtonHandler = function () {
-        var dialog1;
 
         var table = this.getAttribute('data-table');
         var chain = this.getAttribute('data-chain');
@@ -540,7 +542,6 @@ $(document).ready(function(){
     };
 
     var editPolicyButtonHandler = function () {
-        var dialog1;
 
         var chain = this.getAttribute('data-chain');
         var table = this.getAttribute('data-table');
@@ -597,6 +598,10 @@ $(document).ready(function(){
             },
         });
     };
+
+    $.ajaxSetup({
+        timeout: 3000,
+    });
 
     $('body').append('<div id="dialog1"></div>');
     rebuttonActionButtons();

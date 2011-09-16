@@ -6,6 +6,7 @@ import Control.Monad.State
 import Data.IORef
 import Data.Map
 import Happstack.Server
+import Iptables.Types
 import IptAdmin.System
 import IptAdmin.Types
 import Safe
@@ -93,7 +94,10 @@ waitAndRollBack mainState sessionId = do
             case backup session of
                 Nothing -> (m, Nothing)
                 Just iptablesStr ->
-                    let session' = session {backup = Nothing}
+                    let session' = session { backup = Nothing
+                                           -- сбрасываем счётчики iptables
+                                           , sIptables = Iptables [] [] [] []
+                                           }
                         m' = insert sessionId session' m
                     in
                         (m', Just iptablesStr)
