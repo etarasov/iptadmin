@@ -14,7 +14,10 @@ import qualified Text.Blaze.Html5.Attributes as A
 
 checkBox :: String -> Bool -> Html
 checkBox name on = do
-    let chBox = H.input ! A.type_ "checkbox" ! A.name (fromString name) ! A.value "on"
+    let chBox = H.input ! A.type_ "checkbox"
+                        ! A.id (fromString name)
+                        ! A.name (fromString name)
+                        ! A.value "on"
     if on then chBox ! A.checked "checked"
           else chBox
 
@@ -50,10 +53,13 @@ renderFormEntry :: [String] -> (FormEntry, Maybe ResMessage) -> Html
 renderFormEntry _ (FESrc en inv str, resMesMay) =
     H.tr $ do
         H.td $ do
-            "Source" >> H.br
+            H.label ! A.for "sourceEnable"
+                    $ "Source"
+            H.br
             checkBox "sourceEnable" en
         H.td $ do
-            "!"
+            H.label ! A.for "sourceInv"
+                    $ "!"
             checkBox "sourceInv" inv
         H.td $
             H.input ! A.type_ "text" ! A.name "source" ! A.value (fromString str)
@@ -61,10 +67,13 @@ renderFormEntry _ (FESrc en inv str, resMesMay) =
 renderFormEntry _ (FEDst en inv str, resMesMay) =
     H.tr $ do
         H.td $ do
-            "Destination" >> H.br
+            H.label ! A.for "destinationEnable"
+                    $ "Destination"
+            H.br
             checkBox "destinationEnable" en
         H.td $ do
-            "!"
+            H.label ! A.for "destinationInv"
+                    $ "!"
             checkBox "destinationInv" inv
         H.td $
             H.input ! A.type_ "text" ! A.name "destination" ! A.value (fromString str)
@@ -72,10 +81,13 @@ renderFormEntry _ (FEDst en inv str, resMesMay) =
 renderFormEntry _ (FEProt en inv prot, resMesMay) =
     H.tr $ do
         H.td $ do
-            "Protocol" >> H.br
+            H.label ! A.for "protocolEnable"
+                    $ "Protocol"
+            H.br
             checkBox "protocolEnable" en
         H.td $ do
-            "!"
+            H.label ! A.for "protocolInv"
+                    $ "!"
             checkBox "protocolInv" inv
         H.td $
             H.select ! A.id "protocol" ! A.name "protocol" $ do
@@ -97,10 +109,13 @@ renderFormEntry _ (FEProt en inv prot, resMesMay) =
 renderFormEntry _ (FESPort en inv str, resMesMay) =
     H.tr $ do
         H.td $ do
-            "Source port" >> H.br
+            H.label ! A.for "sportEnable"
+                    $ "Source port"
+            H.br
             checkBox "sportEnable" en
         H.td $ do
-            "!"
+            H.label ! A.for "sportInv"
+                    $ "!"
             checkBox "sportInv" inv
         H.td $
             H.input ! A.type_ "text" ! A.name "sport" ! A.value (fromString str)
@@ -108,10 +123,13 @@ renderFormEntry _ (FESPort en inv str, resMesMay) =
 renderFormEntry _ (FEDPort en inv str, resMesMay) =
     H.tr $ do
         H.td $ do
-            "Destination port" >> H.br
+            H.label ! A.for "dportEnable"
+                    $ "Destination port"
+            H.br
             checkBox "dportEnable" en
         H.td $ do
-            "!"
+            H.label ! A.for "dportInv"
+                    $ "!"
             checkBox "dportInv" inv
         H.td $
             H.input ! A.type_ "text" ! A.name "dport" ! A.value (fromString str)
@@ -119,10 +137,13 @@ renderFormEntry _ (FEDPort en inv str, resMesMay) =
 renderFormEntry _ (FEInput en inv str, resMesMay) =
     H.tr $ do
         H.td $ do
-            "Input interface" >> H.br
+            H.label ! A.for "inputEnable"
+                    $ "Input interface"
+            H.br
             checkBox "inputEnable" en
         H.td $ do
-            "!"
+            H.label ! A.for "inputInv"
+                    $ "!"
             checkBox "inputInv" inv
         H.td $
             H.input ! A.type_ "text" ! A.name "input" ! A.value (fromString str)
@@ -130,10 +151,13 @@ renderFormEntry _ (FEInput en inv str, resMesMay) =
 renderFormEntry _ (FEOutput en inv str, resMesMay) =
     H.tr $ do
         H.td $ do
-            "Output interface" >> H.br
+            H.label ! A.for "outputEnable"
+                    $ "Output interface"
+            H.br
             checkBox "outputEnable" en
         H.td $ do
-            "!"
+            H.label ! A.for "outputInv"
+                    $ "!"
             checkBox "outputInv" inv
         H.td $
             H.input ! A.type_ "text" ! A.name "output" ! A.value (fromString str)
@@ -141,20 +165,32 @@ renderFormEntry _ (FEOutput en inv str, resMesMay) =
 renderFormEntry _ (FEState en stateSet, resMesMay) =
     H.tr $ do
         H.td $ do
-            "State" >> H.br
+            H.label ! A.for "stateEnable"
+                    $ "State"
+            H.br
             checkBox "stateEnable" en
         H.td ""
         H.td $ do
             checkBox "stateNew" $ CStNew `member` stateSet
-            "New" >> H.br
+            H.label ! A.for "stateNew"
+                    $ "New"
+            H.br
             checkBox "stateEstablished" $ CStEstablished `member` stateSet
-            "Established" >> H.br
+            H.label ! A.for "stateEstablished"
+                    $ "Established"
+            H.br
             checkBox "stateRelated" $ CStRelated `member` stateSet
-            "Related" >> H.br
+            H.label ! A.for "stateRelated"
+                    $ "Related"
+            H.br
             checkBox "stateInvalid" $ CStInvalid `member` stateSet
-            "Invalid" >> H.br
+            H.label ! A.for "stateInvalid"
+                    $ "Invalid"
+            H.br
             checkBox "stateUntracked" $ CStUntracked `member` stateSet
-            "Untracked" >> H.br
+            H.label ! A.for "stateUntracked"
+                    $ "Untracked"
+            H.br
         maybe mempty printMesTd resMesMay
 
 renderFormEntry userChainNames (FEFiltTar filtTar rejectType userChain, resMesMay) =
@@ -166,27 +202,30 @@ renderFormEntry userChainNames (FEFiltTar filtTar rejectType userChain, resMesMa
                     H.th ! A.class_ "targetParam" $ "Parameters"
                 H.tr $ do
                     H.td ! A.class_ "target" $ do
-                        let acceptRadio = H.input ! A.type_ "radio" ! A.name "target" ! A.value "accept"
+                        let acceptRadio = H.input ! A.id "accept" ! A.type_ "radio" ! A.name "target" ! A.value "accept"
                         case filtTar of
                             FAccept -> acceptRadio ! A.checked "checked"
                             _ -> acceptRadio
-                        "Acccept"
+                        H.label ! A.for "accept"
+                                $ "Acccept"
                     H.td ! A.class_ "targetParam" $ ""
                 H.tr $ do
                     H.td ! A.class_ "target" $ do
-                        let dropRadio = H.input ! A.type_ "radio" ! A.name "target" ! A.value "drop"
+                        let dropRadio = H.input ! A.type_ "radio" ! A.id "drop" ! A.name "target" ! A.value "drop"
                         case filtTar of
                             FDrop -> dropRadio ! A.checked "checked"
                             _ -> dropRadio
-                        "Drop"
+                        H.label ! A.for "drop"
+                                $ "Drop"
                     H.td ! A.class_ "targetParam" $ ""
                 H.tr $ do
                     H.td ! A.class_ "target" $ do
-                        let rejectRadio = H.input ! A.type_ "radio" ! A.name "target" ! A.value "reject"
+                        let rejectRadio = H.input ! A.type_ "radio" ! A.id "reject" ! A.name "target" ! A.value "reject"
                         case filtTar of
                             FReject -> rejectRadio ! A.checked "checked"
                             _ -> rejectRadio
-                        "Reject" >> H.br
+                        H.label ! A.for "reject"
+                                $ "Reject"
                     H.td ! A.class_ "targetParam" $
                         H.select ! A.id "rejectType" ! A.name "rejectType" $
                             let
@@ -316,69 +355,84 @@ renderDNat :: Bool -> String -> Bool -> Bool -> Html
 renderDNat checked dnatAddr dnatRand dnatPersist =
     H.tr $ do
         H.td ! A.class_ "target" $ do
-            let dnatRadio = H.input ! A.type_ "radio" ! A.name "target" ! A.value "dnat"
+            let dnatRadio = H.input ! A.type_ "radio" ! A.id "dnat" ! A.name "target" ! A.value "dnat"
             if checked then dnatRadio ! A.checked "checked"
                        else dnatRadio
-            "Destination Nat"
+            H.label ! A.for "dnat"
+                    $ "Destination Nat"
         H.td ! A.class_ "targetParam" $ do
-            "dnat address:"
-            H.input ! A.type_ "text" ! A.name "dnataddress" ! A.value (fromString dnatAddr) >> H.br
-            "random:"
+            H.label ! A.for "dnataddress"
+                    $ "dnat address:"
+            H.input ! A.type_ "text" ! A.id "dnataddress" ! A.name "dnataddress" ! A.value (fromString dnatAddr) >> H.br
+            H.label ! A.for "dnatrandom"
+                    $ "random:"
             checkBox "dnatrandom" dnatRand >> H.br
-            "persistent:"
+            H.label ! A.for "dnatpersistent"
+                    $ "persistent:"
             checkBox "dnatpersistent" dnatPersist >> H.br
 
 renderRedirect :: Bool -> String -> Bool -> Html
 renderRedirect checked redirPort redirRand =
     H.tr $ do
         H.td ! A.class_ "target" $ do
-            let redirRadio = H.input ! A.type_ "radio" ! A.name "target" ! A.value "redirect"
+            let redirRadio = H.input ! A.type_ "radio" ! A.id "redirect" ! A.name "target" ! A.value "redirect"
             if checked then redirRadio ! A.checked "checked"
                        else redirRadio
-            "Redirect"
+            H.label ! A.for "redirect"
+                    $ "Redirect"
         H.td ! A.class_ "targetParam" $ do
-            "port:"
-            H.input ! A.type_ "text" ! A.name "redirport" ! A.value (fromString redirPort) >> H.br
-            "random:"
+            H.label ! A.for "redirport"
+                    $ "port:"
+            H.input ! A.type_ "text" ! A.id "redirport" ! A.name "redirport" ! A.value (fromString redirPort) >> H.br
+            H.label ! A.for "redirrandom"
+                    $ "random:"
             checkBox "redirrandom" redirRand
 
 renderSNat :: Bool -> String -> Bool -> Bool -> Html
 renderSNat checked snatAddr snatRand snatPersist =
     H.tr $ do
         H.td ! A.class_ "target" $ do
-            let snatRadio = H.input ! A.type_ "radio" ! A.name "target" ! A.value "snat"
+            let snatRadio = H.input ! A.type_ "radio" ! A.id "snat" ! A.name "target" ! A.value "snat"
             if checked then snatRadio ! A.checked "checked"
                        else snatRadio
-            "Source Nat"
+            H.label ! A.for "snat"
+                    $ "Source Nat"
         H.td ! A.class_ "targetParam" $ do
-            "snat address:"
-            H.input ! A.type_ "text" ! A.name "snataddress" ! A.value (fromString snatAddr) >> H.br
-            "random:"
+            H.label ! A.for "snataddress"
+                    $ "snat address:"
+            H.input ! A.type_ "text" ! A.id "snataddress" ! A.name "snataddress" ! A.value (fromString snatAddr) >> H.br
+            H.label ! A.for "snatrandom"
+                    $ "random:"
             checkBox "snatrandom" snatRand >> H.br
-            "persistent:"
+            H.label ! A.for "snatpersistent"
+                    $ "persistent:"
             checkBox "snatpersistent" snatPersist >> H.br
 renderMasq :: Bool -> String -> Bool -> Html
 renderMasq checked masqPort masqRand =
     H.tr $ do
         H.td ! A.class_ "target" $ do
-            let masqRadio = H.input ! A.type_ "radio" ! A.name "target" ! A.value "masquerade"
+            let masqRadio = H.input ! A.type_ "radio" ! A.id "masquerade" ! A.name "target" ! A.value "masquerade"
             if checked then masqRadio ! A.checked "checked"
                        else masqRadio
-            "Masquerade"
+            H.label ! A.for "masquerade"
+                    $ "Masquerade"
         H.td ! A.class_ "targetParam" $ do
-            "port:"
-            H.input ! A.type_ "text" ! A.name "masqport" ! A.value (fromString masqPort) >> H.br
-            "random:"
+            H.label ! A.for "masqport"
+                    $ "port:"
+            H.input ! A.type_ "text" ! A.id "masqport" ! A.name "masqport" ! A.value (fromString masqPort) >> H.br
+            H.label ! A.for "masqrandom"
+                    $ "random:"
             checkBox "masqrandom" masqRand
 
 renderUserChain :: Bool -> [String] -> String -> Html
 renderUserChain checked allChains chain =
     H.tr $ do
         H.td ! A.class_ "target" $ do
-            let userChainRadio = H.input ! A.type_ "radio" ! A.name "target" ! A.value "userChain"
+            let userChainRadio = H.input ! A.type_ "radio" ! A.id "userChain" ! A.name "target" ! A.value "userChain"
             if checked then userChainRadio ! A.checked "checked"
                        else userChainRadio
-            "User chain"
+            H.label ! A.for "userChain"
+                    $ "User chain"
         H.td ! A.class_ "targetParam" $
             H.select ! A.id "userChain" ! A.name "userChain" $
                 mapM_ (renderOption chain) allChains
