@@ -1,5 +1,5 @@
 Name:           iptadmin
-Version:        1.2.0
+Version:        1.2.1
 Cabal-Version:  >= 1.4
 Author:         Evgeny Tarasov
 Build-type:     Simple
@@ -23,6 +23,24 @@ Extra-source-files: html/htmlwrapper.html,
                     INSTALL
                     Makefile
                     Changelog
+                    static/css/iptadmin.css
+                    static/css/iptadmin-theme/jquery-ui-1.8.16.custom.css
+                    static/css/iptadmin-theme/images/ui-bg_flat_0_aaaaaa_40x100.png
+                    static/css/iptadmin-theme/images/ui-bg_flat_75_ffffff_40x100.png
+                    static/css/iptadmin-theme/images/ui-bg_glass_55_fbf9ee_1x400.png
+                    static/css/iptadmin-theme/images/ui-bg_glass_65_ffffff_1x400.png
+                    static/css/iptadmin-theme/images/ui-bg_glass_75_f0f0f0_1x400.png
+                    static/css/iptadmin-theme/images/ui-bg_glass_75_fafafa_1x400.png
+                    static/css/iptadmin-theme/images/ui-bg_glass_95_fef1ec_1x400.png
+                    static/css/iptadmin-theme/images/ui-bg_highlight-hard_75_d7d7d7_1x100.png
+                    static/css/iptadmin-theme/images/ui-icons_000000_256x240.png
+                    static/css/iptadmin-theme/images/ui-icons_222222_256x240.png
+                    static/css/iptadmin-theme/images/ui-icons_2e83ff_256x240.png
+                    static/css/iptadmin-theme/images/ui-icons_5b5b5b_256x240.png
+                    static/css/iptadmin-theme/images/ui-icons_cd0a0a_256x240.png
+                    static/js/jquery-1.6.2.min.js
+                    static/js/jquery-ui-1.8.16.custom.min.js
+                    static/js/showpage.js
 
 Executable iptadmin
     Build-Depends:  base >= 4 && < 5,
