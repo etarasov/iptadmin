@@ -49,7 +49,8 @@ Executable iptadmin
                     hsyslog >= 1.4 && < 2,
                     hdaemonize >= 0.4.4 && < 0.5,
                     file-embed >= 0.0.4 && < 0.1,
-                    old-time >= 1.0.0.3 && < 1.1
+                    old-time >= 1.0.0.3 && < 1.1,
+                    template-haskell >= 2.4
     Main-Is:        Main.hs
     Other-modules:  IptAdmin.AccessControl
                     IptAdmin.AddChainPage

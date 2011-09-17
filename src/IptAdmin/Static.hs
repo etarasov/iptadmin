@@ -2,13 +2,15 @@
 
 module IptAdmin.Static where
 
-import Control.Monad.Error
+import Control.Monad.Error hiding (lift)
 import qualified Data.ByteString as B
 import Data.FileEmbed
 import Happstack.Server.FileServe.BuildingBlocks
 import Happstack.Server.Types
 import Happstack.Server.SimpleHTTP
 import IptAdmin.Types
+import Language.Haskell.TH.Syntax
+import System.IO.Unsafe (unsafePerformIO)
 import System.Time
 
 pageHandlers :: IptAdminAuth Response
@@ -72,6 +74,14 @@ returnPng file = do
                                       0
                                       (toInteger $ B.length file)
 
+-- | Get date and time of compilation
+updateClockTime1 = $(lift $ let TOD a _ = unsafePerformIO getClockTime in a)
+updateClockTime2 = $(lift $ let TOD _ b = unsafePerformIO getClockTime in b)
+
+updateTime :: CalendarTime
+updateTime = unsafePerformIO $ toCalendarTime $ TOD updateClockTime1 updateClockTime2
+
+{-
 updateTime :: CalendarTime
 updateTime = CalendarTime 2011
                           September
@@ -85,6 +95,7 @@ updateTime = CalendarTime 2011
                           "GMT"
                           0
                           False
+                          -}
 
 jquery162minjs :: B.ByteString
 jquery162minjs = $(embedFile "static/js/jquery-1.6.2.min.js")
