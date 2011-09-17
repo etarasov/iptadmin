@@ -1,5 +1,5 @@
 iptadmin 1.2.0    17.09.2011:
-  * Add jquery-ui and background requests.
+  * Add jquery-ui dialogs and background requests.
   * Improve appearance.
   * Upgrade code to Happstack 6.
 
