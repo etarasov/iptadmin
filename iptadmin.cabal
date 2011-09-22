@@ -11,7 +11,7 @@ HomePage:       http://iptadmin.confmgr.org
 Stability:      Stable
 Synopsis:       web-interface for iptables
 Description:    web-interface for iptables with PAM authorization
-Category:       System, Tools, Web
+Category:       System, Tools, Web, Application
 Extra-source-files: html/htmlwrapper.html,
                     util/ptmpl/Setup.hs,
                     util/ptmpl/ptmpl.cabal,
