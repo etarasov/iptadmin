@@ -178,13 +178,13 @@ showMangle countType iptables iptables' = do
         header "mangle" "Iptables Mangle table. Rule editing is not supported for Mangle yet."
         showPageHtml mangle
 
-includeJs :: Html
+includeJs :: Markup
 includeJs =
     H.script H.! A.type_ "text/javascript"
              H.! A.src "/static/js/showpage.js"
              $ ""
 
-showPageHtml :: Html -> Html
+showPageHtml :: Markup -> Markup
 showPageHtml table =
     H.div H.! A.id "rules" $
         table

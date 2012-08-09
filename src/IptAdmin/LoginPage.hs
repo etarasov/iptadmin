@@ -68,7 +68,7 @@ pageHandlerPost authenticate sessionsIORef = do
             -- 4. Редиректим на /show
             redir "/show"
 
-loginForm :: String -> Maybe String -> Html
+loginForm :: String -> Maybe String -> Markup
 loginForm login mesMay =
     H.div ! A.class_ "loginForm" $ do
         H.div ! A.class_ "loginForm2" $

@@ -11,6 +11,7 @@ import IptAdmin.Utils
 import Iptables.Print
 import Iptables.Types
 import Text.Blaze
+import Text.Blaze.Internal
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 
@@ -27,7 +28,7 @@ renderTable :: (String, String)       -- ^ (table name, table name for rendering
             -> String                 -- ^ random string for 'refresh' link
             -> [Chain]                -- ^ table's chains
             -> [Chain]                -- ^ chains with relative start counters state
-            -> Html
+            -> Markup
 renderTable (tableName, _) countType maxCounter refreshString chains chains' = do
     mapM_ (renderChain tableName countType maxCounter refreshString) $ zip chains chains'
     -- H.a ! A.href (fromString $ "/addchain?table="++tableName) $ "Add chain"
@@ -37,8 +38,8 @@ renderTable (tableName, _) countType maxCounter refreshString chains chains' = d
              ! A.id "addChainButton"
              $ "Add chain"
 
--- | Table name -> counters type -> max counter -> refresh string ->  Chain -> Html
-renderChain :: String -> CountersType -> Integer -> String -> (Chain,Chain) -> Html
+-- | Table name -> counters type -> max counter -> refresh string ->  Chain -> Markup
+renderChain :: String -> CountersType -> Integer -> String -> (Chain,Chain) -> Markup
 renderChain tableName countType maxCounterDiff refreshString (Chain n p counters rs, Chain _ _ counters' rs') =
     H.table ! A.class_ "rules" ! A.id (fromString $ "chain-table-" ++ tableName ++ "-" ++ n) $ do
         H.tr $ do
@@ -149,7 +150,7 @@ renderChain tableName countType maxCounterDiff refreshString (Chain n p counters
                          $ "Add rule"
 
 -- | (Table name, Chain name) -> Counters type -> max counter -> Rule -> Html
-renderRule :: (String, String) -> CountersType -> Integer -> (Int, (Rule, Rule)) -> Html
+renderRule :: (String, String) -> CountersType -> Integer -> (Int, (Rule, Rule)) -> Markup
 renderRule (tableName, chainName) countType maxCounterDiff (ruleNum, (Rule counters opts tar, Rule counters2 _ _)) =
     let mainTr = if even ruleNum then H.tr ! A.class_ "even"
                                            ! A.id (fromString $ "rule-tr-" ++ tableName ++ "-" ++ chainName ++ "-" ++ show ruleNum)

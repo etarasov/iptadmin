@@ -8,7 +8,7 @@ import Text.Blaze
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 
-editChainForm :: (String, String) -> String -> Maybe String -> Html
+editChainForm :: (String, String) -> String -> Maybe String -> Markup
 editChainForm (tableName, chainName) newChainName mesMay =
     H.div ! A.class_ "editForm" $
         H.form ! A.id "editChainForm" ! A.method "post" $ do
@@ -19,6 +19,6 @@ editChainForm (tableName, chainName) newChainName mesMay =
                     H.td $
                         H.input ! A.type_ "text" ! A.name "newChainName" ! A.value (fromString newChainName) ! A.maxlength "20"
                     case mesMay of
-                        Nothing -> mempty :: Html
+                        Nothing -> mempty :: Markup
                         Just mes ->
                             H.td $ fromString mes

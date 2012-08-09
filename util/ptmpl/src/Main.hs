@@ -1,7 +1,7 @@
 
 module Main where
 
-import System
+import System.Environment
 import Text.ParserCombinators.Parsec
 
 main :: IO ()

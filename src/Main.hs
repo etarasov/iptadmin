@@ -12,7 +12,6 @@ import Data.Monoid
 import Data.Version
 import Happstack.Server.Internal.Monads
 import Happstack.Server.SimpleHTTP
-import Happstack.State.Control
 import IptAdmin.AccessControl
 import IptAdmin.AddChainPage as AddChainPage
 import IptAdmin.AddPage as AddPage

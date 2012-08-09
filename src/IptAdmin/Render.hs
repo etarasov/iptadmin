@@ -13,7 +13,7 @@ import Text.Blaze
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 
-header :: String -> String -> Html
+header :: String -> String -> Markup
 header tableName pageHeader = do
     let filterB = tableName == "filter"
     let mangleB = tableName == "mangle"
@@ -24,7 +24,7 @@ header tableName pageHeader = do
     H.div ! A.class_ "pageHeader" $
         fromString pageHeader
 
-title :: Html
+title :: Markup
 title =
     H.div ! A.id "title" $ do
         H.a ! A.class_ "title" ! A.href "/" $ "IptAdmin"
@@ -32,7 +32,7 @@ title =
             fromString $ intercalate "." $ map show $ versionBranch version
 
 -- Booleans says which link should be distinguished
-links :: Bool -> Bool -> Bool -> Html
+links :: Bool -> Bool -> Bool -> Markup
 links filt nat mangle =
     let
         filtA = H.a ! A.href "/show?table=filter" $ "Filter"
@@ -52,12 +52,12 @@ links filt nat mangle =
                 if mangle then mangleA ! A.class_ "activeTableLink"
                           else mangleA ! A.class_ "tableLink"
 
-logout :: Html
+logout :: Markup
 logout =
     H.div ! A.class_ "logout" $
         H.a ! A.href "/logout" $ "Logout"
 
-renderTarget :: RuleTarget -> (Html, Html)
+renderTarget :: RuleTarget -> (Markup, Markup)
 renderTarget target = case target of
             TAccept -> (H.span ! A.class_ "acceptTarget" $ "ACCEPT", mempty)
             TDrop -> (H.span ! A.class_ "dropTarget" $ "DROP", mempty)
@@ -81,10 +81,10 @@ renderTarget target = case target of
                         fromString (printNatAddr natAddr)
                         " "
                         if rand then "random"
-                                else mempty :: Html
+                                else mempty :: Markup
                         " "
                         if persist then "persist"
-                                   else mempty :: Html
+                                   else mempty :: Markup
                 in
                     (target', param)
             TDNat natAddr rand persist ->
@@ -93,34 +93,34 @@ renderTarget target = case target of
                         fromString (printNatAddr natAddr)
                         " "
                         if rand then "random"
-                                else mempty :: Html
+                                else mempty :: Markup
                         " "
                         if persist then "persist"
-                                   else mempty :: Html
+                                   else mempty :: Markup
                 in
                     (target', param)
             TMasquerade natPort rand ->
                 let target' = H.span ! A.class_ "masqueradeTarget" $ "MASQUERADE"
                     param = do
                         case natPort of
-                            NatPortDefault -> mempty :: Html
+                            NatPortDefault -> mempty :: Markup
                             _ -> fromString (printNatPort natPort)
                         if rand then do
                                     " "
                                     "random"
-                                else mempty :: Html
+                                else mempty :: Markup
                 in
                     (target', param)
             TRedirect natPort rand ->
                 let target' = H.span ! A.class_ "redirectTarget" $ "REDIRECT"
                     param = do
                         case natPort of
-                            NatPortDefault -> mempty :: Html
+                            NatPortDefault -> mempty :: Markup
                             _ -> fromString (printNatPort natPort)
                         if rand then do
                                     " "
                                     "random"
-                                else mempty :: Html
+                                else mempty :: Markup
                 in
                     (target', param)
             TUChain chainName ->

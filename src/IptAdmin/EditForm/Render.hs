@@ -12,7 +12,7 @@ import Text.Blaze
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 
-checkBox :: String -> Bool -> Html
+checkBox :: String -> Bool -> Markup
 checkBox name on = do
     let chBox = H.input ! A.type_ "checkbox"
                         ! A.id (fromString name)
@@ -21,7 +21,7 @@ checkBox name on = do
     if on then chBox ! A.checked "checked"
           else chBox
 
-printMesTd :: ResMessage -> Html
+printMesTd :: ResMessage -> Markup
 printMesTd rm = H.td $ fromString $ case rm of
                         RMError mes -> mes
                         RMSucc mes -> "ok " ++ mes
@@ -31,7 +31,7 @@ maybeListToListMaybe :: Maybe [a] -> [Maybe a]
 maybeListToListMaybe (Just list) = map Just list
 maybeListToListMaybe Nothing = repeat Nothing
 
-editFormHtml :: EditForm a => (String,String,Int,[String]) -> a -> Maybe [ResMessage] -> Html
+editFormHtml :: EditForm a => (String,String,Int,[String]) -> a -> Maybe [ResMessage] -> Markup
 editFormHtml (tableName, chainName, rulePos, userChainNames) form errorListMay =
     let entryList = toEntryList form
         mesListMay = maybeListToListMaybe errorListMay
@@ -49,7 +49,7 @@ editFormHtml (tableName, chainName, rulePos, userChainNames) form errorListMay =
                         maybe mempty (\_-> H.th "Message") errorListMay
                     mapM_ (renderFormEntry userChainNames) $ zip entryList mesListMay
 
-renderFormEntry :: [String] -> (FormEntry, Maybe ResMessage) -> Html
+renderFormEntry :: [String] -> (FormEntry, Maybe ResMessage) -> Markup
 renderFormEntry _ (FESrc en inv str, resMesMay) =
     H.tr $ do
         H.td $ do
@@ -351,7 +351,7 @@ renderFormEntry userChainNames (FENatUserTar natUserTar dnatAddr dnatRand dnatPe
         maybe mempty printMesTd resMesMay
 renderFormEntry _ a = H.tr $ fromString $ "Unknown form entry: " ++ show a
 
-renderDNat :: Bool -> String -> Bool -> Bool -> Html
+renderDNat :: Bool -> String -> Bool -> Bool -> Markup
 renderDNat checked dnatAddr dnatRand dnatPersist =
     H.tr $ do
         H.td ! A.class_ "target" $ do
@@ -371,7 +371,7 @@ renderDNat checked dnatAddr dnatRand dnatPersist =
                     $ "persistent:"
             checkBox "dnatpersistent" dnatPersist >> H.br
 
-renderRedirect :: Bool -> String -> Bool -> Html
+renderRedirect :: Bool -> String -> Bool -> Markup
 renderRedirect checked redirPort redirRand =
     H.tr $ do
         H.td ! A.class_ "target" $ do
@@ -388,7 +388,7 @@ renderRedirect checked redirPort redirRand =
                     $ "random:"
             checkBox "redirrandom" redirRand
 
-renderSNat :: Bool -> String -> Bool -> Bool -> Html
+renderSNat :: Bool -> String -> Bool -> Bool -> Markup
 renderSNat checked snatAddr snatRand snatPersist =
     H.tr $ do
         H.td ! A.class_ "target" $ do
@@ -407,7 +407,7 @@ renderSNat checked snatAddr snatRand snatPersist =
             H.label ! A.for "snatpersistent"
                     $ "persistent:"
             checkBox "snatpersistent" snatPersist >> H.br
-renderMasq :: Bool -> String -> Bool -> Html
+renderMasq :: Bool -> String -> Bool -> Markup
 renderMasq checked masqPort masqRand =
     H.tr $ do
         H.td ! A.class_ "target" $ do
@@ -424,7 +424,7 @@ renderMasq checked masqPort masqRand =
                     $ "random:"
             checkBox "masqrandom" masqRand
 
-renderUserChain :: Bool -> [String] -> String -> Html
+renderUserChain :: Bool -> [String] -> String -> Markup
 renderUserChain checked allChains chain =
     H.tr $ do
         H.td ! A.class_ "target" $ do
@@ -437,7 +437,7 @@ renderUserChain checked allChains chain =
             H.select ! A.id "userChain" ! A.name "userChain" $
                 mapM_ (renderOption chain) allChains
     where
-    renderOption :: String -> String -> Html
+    renderOption :: String -> String -> Markup
     renderOption selName optName = do
         let opt = H.option ! A.value (fromString optName) $ fromString optName
         let optSel = if optName == selName then opt ! A.selected "selected"

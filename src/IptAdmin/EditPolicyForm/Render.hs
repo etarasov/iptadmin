@@ -9,11 +9,11 @@ import Text.Blaze
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 
-editPolicyForm :: (String, String) -> Policy -> Html
+editPolicyForm :: (String, String) -> Policy -> Markup
 editPolicyForm (tableName, chainName) policy = do
     case policy of
-        ACCEPT -> mempty :: Html
-        DROP -> mempty :: Html
+        ACCEPT -> mempty :: Markup
+        DROP -> mempty
         a -> fromString ("Unsupported policy type: " ++ show a)
     H.div ! A.class_ "editForm" $
         H.form ! A.id "editPolicyForm" ! A.method "post" $ do

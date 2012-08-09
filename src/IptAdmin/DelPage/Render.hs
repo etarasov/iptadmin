@@ -7,7 +7,7 @@ import Text.Blaze
 import qualified Text.Blaze.Html5 as H
 import qualified Text.Blaze.Html5.Attributes as A
 
-delPageForm :: (String, String, Int) -> String -> Html
+delPageForm :: (String, String, Int) -> String -> Markup
 delPageForm (tableName, chainName, rulePos) rule =
     H.div ! A.class_ "editForm" $
         H.form ! A.id "delform" ! A.method "post" $ do

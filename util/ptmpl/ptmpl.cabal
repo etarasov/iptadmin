@@ -13,7 +13,6 @@ Tested-with:    GHC==6.10.3
 
 Executable ptmpl
     Build-Depends:  base >= 3 && < 5,
-                    haskell98,
                     parsec >= 2.1
     Main-Is:        Main.hs
     Hs-Source-Dirs: src
