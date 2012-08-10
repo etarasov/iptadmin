@@ -19,6 +19,7 @@ import IptAdmin.Config
 import IptAdmin.DelChainPage as DelChainPage
 import IptAdmin.DelPage as DelPage
 import IptAdmin.EditChainPage as EditChainPage
+import IptAdmin.EditIpForwPage as EditIpForwPage
 import IptAdmin.EditPage as EditPage
 import IptAdmin.EditPolicyPage as EditPolicyPage
 import IptAdmin.InsertPage as InsertPage
@@ -102,6 +103,7 @@ control = msum [ commitChange
                , dir "editchain" EditChainPage.pageHandlers
                , dir "delchain" DelChainPage.pageHandlers
                , dir "editpolicy" EditPolicyPage.pageHandlers
+               , dir "editipforw" EditIpForwPage.pageHandlers
                ]
 
 {- | Save changes if user have changed something

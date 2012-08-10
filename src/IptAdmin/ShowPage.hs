@@ -159,9 +159,11 @@ showNat countType iptables iptables' = do
                           refreshString
                           (sortNatTable $ tNat iptables)
                           (sortNatTable $ tNat iptables')
+    forwState <- getForwardingState
     return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
         includeJs
         header "nat" "Iptables Nat table"
+        renderIpForwarding forwState
         showPageHtml nat
 
 showMangle :: CountersType -> Iptables -> Iptables -> IptAdmin Response

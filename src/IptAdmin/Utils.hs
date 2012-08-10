@@ -3,13 +3,17 @@ module IptAdmin.Utils where
 import Control.Concurrent
 import Control.Monad.Error
 import Control.Monad.State
+import Data.ByteString(empty)
+import Data.ByteString.UTF8(fromString)
 import Data.IORef
-import Data.Map
+import Data.Map hiding (empty)
+import Foreign.ForeignPtr.Safe
 import Happstack.Server
 import Iptables.Types
 import IptAdmin.System
 import IptAdmin.Types
 import Safe
+import System.Augeas
 import Text.ParserCombinators.Parsec.Prim hiding (State (..))
 import Text.ParserCombinators.Parsec.Char
 import Text.ParserCombinators.Parsec.Combinator
@@ -120,3 +124,34 @@ bookmarkForJump chainName ruleNumMay =
                     "#" ++ chainName ++ "_" ++ show (ruleNum - 15)
                 else
                     "#chain_" ++ chainName
+
+getForwardingState :: MonadIO m => ServerPartT (ErrorT String m) Bool
+getForwardingState = do
+    forwStateStr <- liftIO $ readFile "/proc/sys/net/ipv4/ip_forward"
+    let forwState = read forwStateStr :: Integer
+    case forwState of
+        0 -> return False
+        1 -> return True
+        a -> throwError $ "get " ++ show a ++ " from /proc/sys/net/ipv4/ip_foward"
+
+setForwardingState :: MonadIO m => Bool -> ServerPartT (ErrorT String m) ()
+setForwardingState forwState = do
+    -- 1. /proc/...
+    let forwState' = case forwState of
+            True -> "1"
+            False -> "0"
+    liftIO $ writeFile "/proc/sys/net/ipv4/ip_forward" forwState'
+
+    -- 2. /etc/sysctl.conf @ augeas
+    augMay <- liftIO $ aug_init empty empty []
+    aug <- case augMay of
+        Just a -> return a
+        Nothing -> throwError "Error on augeas init"
+
+    res <- liftIO $ withForeignPtr aug (\a -> aug_set a (fromString "files/etc/sysctl.conf/net.ipv4.ip_forward") (fromString forwState'))
+    when (res /= success) $
+        throwError $ "Error on augeas run: " ++ show res
+
+    res <- liftIO $ withForeignPtr aug aug_save
+    when (res /= success) $
+        throwError $ "Error on augeas run: " ++ show res

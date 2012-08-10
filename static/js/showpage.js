@@ -31,6 +31,7 @@ $(document).ready(function(){
         $(".addChainButton").click(addChainButtonHandler);
         $(".delChainButton").click(delChainButtonHandler);
         $(".editPolicyButton").click(editPolicyButtonHandler);
+        $(".editIpForwButton").click(editIpForwButtonHandler);
     };
 
     var ajaxError = function (x, t, m) {
@@ -624,6 +625,71 @@ $(document).ready(function(){
                 $('#dialog1').html("");
                 dialog1 = $('#dialog1').dialog({
                     title: 'Select policy',
+                    modal: true,
+                    resizable: false,
+                    buttons: dialogButtons,
+                });
+                dialog1.html(ans);
+                dialog1.dialog("option","width",'auto');
+                dialog1.dialog("option","height",'auto');
+                dialog1.dialog("option","position","center");
+            },
+        });
+    };
+    var editIpForwButtonHandler = function () {
+        $.ajax({
+            url: '/editipforw',
+            dataType: 'html',
+            error: ajaxError,
+            success: function (ans) {
+                var dialogButtons = [
+                    {
+                        text: "Submit",
+                        click: function () {
+                            dialog1.dialog("option","buttons",[]);
+                            var str = $("#editIpForwForm").serialize();
+                            $.ajax({
+                                type: "POST",
+                                url: "/editipforw",
+                                data: str,
+                                error: ajaxError,
+                                success: function (ans) {
+                                    dialog1.dialog("option", "buttons", dialogButtons);
+                                    if (ans.split(':')[0] == "ok") {
+                                        dialog1.dialog("destroy");
+                                        newSpan = "";
+                                        switch(ans.split(':')[1]){
+                                            case "on":
+                                                newSpan = '<span id="ipForwardOn">On</span>';
+                                                $('#ipForwardOff').replaceWith(newSpan);
+                                                break;
+                                            case "off":
+                                                newSpan = '<span id="ipForwardOff">Off</span>';
+                                                $('#ipForwardOn').replaceWith(newSpan);
+                                                break;
+                                            default: alert("wrong value: " + ans.split(':')[1]);
+                                        };
+                                    }
+                                    else {
+                                        dialog1.html(ans);
+                                        dialog1.dialog("option","width",'auto');
+                                        dialog1.dialog("option","height",'auto');
+                                        dialog1.dialog("option","position","center");
+                                    }
+                                },
+                            });
+                        },
+                    },
+                    {
+                        text: "Cancel",
+                        click: function() {
+                            dialog1.dialog("destroy");
+                        },
+                    },
+                ];
+                $('#dialog1').html("");
+                dialog1 = $('#dialog1').dialog({
+                    title: 'Select forwarding state',
                     modal: true,
                     resizable: false,
                     buttons: dialogButtons,

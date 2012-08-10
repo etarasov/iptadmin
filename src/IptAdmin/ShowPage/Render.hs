@@ -242,3 +242,17 @@ bytesToPrefix bytes = bytesToPrefix' ["","K","M","G","T","P","E","Z","Y"] bytes
                 show b ++ x
             else
                 bytesToPrefix' xs nextLevel
+
+renderIpForwarding :: Bool -> Markup
+renderIpForwarding forwState = do
+    H.button ! A.id "forwStateButton"
+             ! A.class_ "bigActionButton editIpForwButton"
+             $ "IPv4 Forwarding:"
+    H.span ! A.id (case forwState of
+                    True -> "ipForwardOn"
+                    False -> "ipForwardOff"
+                    )
+           $ do
+        toMarkup $ case forwState of
+            True -> "On" :: String
+            False -> "Off"

@@ -341,3 +341,14 @@ button.ui-button {
     padding: 5px;
 }
 
+/* Цвета флага ip forwarding
+ */
+span#ipForwardOn{
+    padding-left: 4px;
+    color: green;
+}
+
+span#ipForwardOff{
+    padding-left: 4px;
+    color: red;
+}
