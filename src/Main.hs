@@ -12,6 +12,7 @@ import Data.Monoid
 import Data.Version
 import Happstack.Server.Internal.Monads
 import Happstack.Server.SimpleHTTP
+import Happstack.Server.SimpleHTTPS
 import IptAdmin.AccessControl
 import IptAdmin.AddChainPage as AddChainPage
 import IptAdmin.AddPage as AddPage
@@ -63,6 +64,8 @@ main = do
 startDaemon :: IptAdminConfig -> a -> IO ()
 startDaemon config _ = do
     sessions <- newIORef empty
+
+    {-
     let httpConf = Conf (cPort config) Nothing Nothing 60
 
     -- create socket manually because we must listen only on 127.0.0.1
@@ -82,6 +85,15 @@ startDaemon config _ = do
     syslog Notice "Shutting down..."
     killThread httpTid
     syslog Notice "Shutdown complete"
+    -}
+
+    let tlsConf = nullTLSConf { tlsPort = 8000
+                              , tlsCert = "/etc/iptadmin/server.crt"
+                              , tlsKey = "/etc/iptadmin/server.key"
+                              }
+    simpleHTTPS' unpackErrorT
+                 tlsConf
+                 $ decodeBody (defaultBodyPolicy "/tmp/" 4096 20000 40000 ) >> authorize sessions config control
 
 unpackErrorT :: (Monad m) => UnWebT (ErrorT String m) a -> UnWebT m a
 unpackErrorT handler = do
