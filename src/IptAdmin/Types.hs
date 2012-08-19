@@ -30,7 +30,13 @@ type MainState = (SessionId, IORef Sessions, IptAdminConfig)
 data IptAdminConfig = IptAdminConfig { cSaveCommand :: String
                                      , cPort :: Int
                                      , cPamName :: String
+                                     , cSSL :: Maybe SSLConfig
                                      }
+
+data SSLConfig = SSLConfig { scCreatePair :: Bool
+                           , scCrtPath :: String
+                           , scKeyPath :: String
+                           }
 
 -- | Display bytes or packets on show page
 data CountersType = CTBytes
