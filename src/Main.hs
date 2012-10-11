@@ -70,7 +70,7 @@ startDaemon config _ = do
 
     case cSSL config of
         Nothing -> do
-            let httpConf = Conf (cPort config) Nothing Nothing 60
+            let httpConf = Conf (cPort config) Nothing Nothing 60 Nothing
 
             -- create socket manually because we must listen only on 127.0.0.1
             sock <- socket AF_INET Stream defaultProtocol

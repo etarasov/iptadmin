@@ -46,7 +46,7 @@ Executable iptadmin
     Build-Depends:  base >= 4 && < 5,
                     utf8-string >= 0.3,
                     bytestring >= 0.9,
-                    happstack-server == 7.0.* && < 7.0.5,
+                    happstack-server == 7.0.*,
                     happstack-server-tls == 7.0.*,
                     mtl >= 1.1,
                     safe >= 0.3,
