@@ -247,7 +247,7 @@ $(document).ready(function(){
                                         });
                                     }
                                     else {
-                                        dialog1.html(ans2);
+                                        dialog1.html(ans9);
                                         dialog1.dialog("option","width",'auto');
                                         dialog1.dialog("option","height",'auto');
                                         dialog1.dialog("option","position","center");
