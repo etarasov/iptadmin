@@ -1,3 +1,10 @@
+iptadmin 1.3.0    22.10.2012:
+  * Add https support
+  * Add dialog for configuring ipv4 forwarding
+  * Fix js error related to inserting iptables rule
+  * Fix frontend markup for firefox 16
+  * Update dependenicy list: base-4, happstack-7, blaze-markup-0.5
+
 iptadmin 1.2.1    17.09.2011:
   * Add static files to iptadmin.cabal and source tarball.
 
