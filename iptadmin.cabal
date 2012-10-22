@@ -86,6 +86,8 @@ Executable iptadmin
                     IptAdmin.EditForm.Render
                     IptAdmin.EditForm.Types
                     IptAdmin.EditForm.Utils
+                    IptAdmin.EditIpForwPage
+                    IptAdmin.EditIpForwForm.Render
                     IptAdmin.EditPage
                     IptAdmin.EditPolicyForm.Render
                     IptAdmin.EditPolicyPage
