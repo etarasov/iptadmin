@@ -1,3 +1,6 @@
+iptadmin 1.3.1    23.10.2012:
+  * fix cabal description - add missing files to a hackage tarball (again)
+
 iptadmin 1.3.0    22.10.2012:
   * Add https support
   * Add dialog for configuring ipv4 forwarding
