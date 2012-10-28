@@ -51,6 +51,7 @@ main = do
         ("--help":_) -> do
             putStrLn $ "usage: \niptadmin [--no-daemon] (start|stop|restart)\niptadmin --help | --version"
             exitSuccess
+	["--no-daemon"] -> return ()
         [] -> return ()
         a -> do
             putStrLn $ "Unrecognized options: " ++ show a
