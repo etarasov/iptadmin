@@ -49,9 +49,13 @@ main = do
             putStrLn $ "Iptadmin v" ++ ver ++ ", (C) Evgeny Tarasov 2011"
             exitSuccess
         ("--help":_) -> do
-            putStrLn $ "usage: iptadmin (start|stop|restart)"
+            putStrLn $ "usage: \niptadmin [--no-daemon] (start|stop|restart)\niptadmin --help | --version"
             exitSuccess
-        _ -> return ()
+        [] -> return ()
+        a -> do
+            putStrLn $ "Unrecognized options: " ++ show a
+            exitFailure
+    let daemonize = not $ "--no-daemon" `elem` args
 
     checkRunUnderRoot
 
@@ -62,7 +66,11 @@ main = do
             putStrLn e
             exitFailure
         Right config ->
-            serviced $ simpleDaemon {program = startDaemon config, user = Just "root", syslogOptions = [PID, PERROR]}
+            if daemonize
+            then
+                serviced $ simpleDaemon {program = startDaemon config, user = Just "root", syslogOptions = [PID, PERROR]}
+            else
+                withSyslog "iptadmin" [PID, PERROR] USER (startDaemon config ())
 
 startDaemon :: IptAdminConfig -> a -> IO ()
 startDaemon config _ = do
