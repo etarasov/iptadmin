@@ -7,7 +7,7 @@ Copyright:      2011 Evgeny Tarasov
 License:        BSD3
 License-file:   LICENSE
 Maintainer:     etarasov.ekb@gmail.com
-HomePage:       http://iptadmin.confmgr.org
+HomePage:       http://iptadmin.117.su
 Stability:      Stable
 Synopsis:       web-interface for iptables
 Description:    web-interface for iptables with PAM authorization
