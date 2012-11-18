@@ -49,10 +49,11 @@ main = do
             putStrLn $ "Iptadmin v" ++ ver ++ ", (C) Evgeny Tarasov 2011"
             exitSuccess
         ("--help":_) -> do
-            putStrLn $ "usage: \niptadmin [--no-daemon] (start|stop|restart)\niptadmin --help | --version"
+            putStrLn $ "usage: \niptadmin [--no-daemon] (start|stop)\niptadmin --help | --version"
             exitSuccess
-	["--no-daemon"] -> return ()
-        [] -> return ()
+        ["--no-daemon"] -> return ()
+        ["start"] -> return ()
+        ["stop"] -> return ()
         a -> do
             putStrLn $ "Unrecognized options: " ++ show a
             exitFailure
