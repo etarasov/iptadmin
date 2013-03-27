@@ -1,0 +1,17 @@
+[DEFAULT]
+verbose = True
+patch-name-format=[dk] %(revision)s
+remove-first-log-line = True
+
+[project]
+target = git:target
+start-revision = INITIAL
+root-directory = /home/user1/develop/iptadmin_git
+state-file = tailor.state
+source = darcs:source
+subdir = .
+
+[git:target]
+
+[darcs:source]
+repository = /home/user1/develop/iptadmin
