@@ -1,6 +1,6 @@
 Name:           iptadmin
 Version:        1.3.4
-Cabal-Version:  >= 1.4
+Cabal-Version:  >= 1.6
 Author:         Evgeny Tarasov
 Build-type:     Simple
 Copyright:      2011 Evgeny Tarasov
@@ -12,12 +12,11 @@ Stability:      Stable
 Synopsis:       web-interface for iptables
 Description:    web-interface for iptables with PAM authorization
 Category:       System, Tools, Web, Application
-Extra-source-files: html/htmlwrapper.html,
-                    util/ptmpl/Setup.hs,
-                    util/ptmpl/ptmpl.cabal,
-                    util/ptmpl/src/Main.hs
-                    src/Template.hs,
-                    doc/examples/config/iptadmin.conf
+Source-repository   head
+    type:           git
+    location        https://github.com/etarasov/iptadmin.git
+
+Extra-source-files: doc/examples/config/iptadmin.conf
                     doc/examples/init/iptadmin
                     doc/examples/pam/iptadmin
                     INSTALL
