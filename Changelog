@@ -1,4 +1,6 @@
-iptadmin 1.4.0    <unreleased>:
+iptadmin 1.3.4    19.05.2013:
+  * Get rid of ptmpl utility, simplify building
+  * Migrate to github
 
 iptadmin 1.3.3    29.12.2012:
   * Allow '_' character in name of user chain
