@@ -3,10 +3,10 @@ module IptAdmin.DelPage where
 
 import Control.Monad.Error
 import Happstack.Server.SimpleHTTP
-import Template
 import IptAdmin.DelPage.Render
 import IptAdmin.Render
 import IptAdmin.System
+import IptAdmin.Template
 import IptAdmin.Types
 import IptAdmin.Utils
 import Iptables
@@ -29,7 +29,7 @@ pageHandlerGet = do
 
     (_, rule) <- checkParams tableName chainName rulePosition
 
-    return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
+    return $ buildResponse $ renderHtml $ htmlWrapper $ do
         header tableName $ "Delete rule from '" ++ chainName
                          ++ "' chain in '" ++ tableName
                          ++ "' table in position " ++ show rulePosition

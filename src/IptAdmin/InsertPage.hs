@@ -4,7 +4,6 @@ module IptAdmin.InsertPage where
 import Control.Monad.Error
 import Control.Monad.State
 import Happstack.Server.SimpleHTTP
-import Template
 import IptAdmin.EditForm
 import IptAdmin.EditForm.Render
 import IptAdmin.EditForm.Class

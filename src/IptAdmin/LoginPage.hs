@@ -9,9 +9,9 @@ import Data.Monoid
 import Data.String
 import Data.Time
 import Happstack.Server.SimpleHTTP hiding (Session)
-import Template
 import IptAdmin.Render
 import IptAdmin.System
+import IptAdmin.Template
 import IptAdmin.Types
 import IptAdmin.Utils
 import System.Random
@@ -28,7 +28,7 @@ pageHandlers authenticate sessionsIORef =
 
 pageHandlerGet :: IptAdminAuth Response
 pageHandlerGet =
-    return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
+    return $ buildResponse $ renderHtml $ htmlWrapper $ do
         title
         loginForm "" Nothing
 
@@ -44,7 +44,7 @@ pageHandlerPost authenticate sessionsIORef = do
     authRes <- liftIO $ authenticate login password
     case authRes of
         Just errorMsg ->
-            return $ buildResponse $ htmlWrapper $ renderHtml $ do
+            return $ buildResponse $ renderHtml $ htmlWrapper $ do
                    title
                    loginForm login $ Just errorMsg
         Nothing -> do

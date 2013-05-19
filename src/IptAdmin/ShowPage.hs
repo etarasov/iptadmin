@@ -7,10 +7,10 @@ import Control.Monad.State
 import Data.IORef
 import Data.Map hiding (filter)
 import Happstack.Server.SimpleHTTP
-import Template
 import IptAdmin.Render
 import IptAdmin.ShowPage.Render
 import IptAdmin.System
+import IptAdmin.Template
 import IptAdmin.Types
 import IptAdmin.Utils
 import Iptables
@@ -145,7 +145,7 @@ showFilter countType iptables iptables' = do
                               refreshString
                               (sortFilterTable $ tFilter iptables)
                               (sortFilterTable $ tFilter iptables')
-    return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
+    return $ buildResponse $ renderHtml $ htmlWrapper $ do
         includeJs
         header "filter" "Iptables Filter table"
         showPageHtml filter'
@@ -160,7 +160,7 @@ showNat countType iptables iptables' = do
                           (sortNatTable $ tNat iptables)
                           (sortNatTable $ tNat iptables')
     forwState <- getForwardingState
-    return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
+    return $ buildResponse $ renderHtml $ htmlWrapper $ do
         includeJs
         header "nat" "Iptables Nat table"
         renderIpForwarding forwState
@@ -175,7 +175,7 @@ showMangle countType iptables iptables' = do
                              refreshString
                              (sortMangleTable $ tMangle iptables)
                              (sortMangleTable $ tMangle iptables')
-    return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
+    return $ buildResponse $ renderHtml $ htmlWrapper $ do
         includeJs
         header "mangle" "Iptables Mangle table. Rule editing is not supported for Mangle yet."
         showPageHtml mangle

@@ -3,10 +3,10 @@ module IptAdmin.DelChainPage where
 
 import Control.Monad.Error
 import Happstack.Server.SimpleHTTP
-import Template
 import IptAdmin.DelChainPage.Render
 import IptAdmin.Render
 import IptAdmin.System
+import IptAdmin.Template
 import IptAdmin.Types
 import IptAdmin.Utils
 import Iptables
@@ -30,19 +30,19 @@ pageHandlerGet = do
         Just chain ->
             if not $ null $ cRules chain
                 then
-                    return $ buildResponse $ Template.htmlWrapper $ renderHtml $
+                    return $ buildResponse $ renderHtml $ htmlWrapper $
                         header tableName $ "'" ++ chainName
                                          ++ "' chain is not empty. Please, remove all rules before deleting a chain"
                 else
                     let linkedChains = scanTableForLink (cName chain) table
                     in
                     if not $ null linkedChains
-                        then return $ buildResponse $ Template.htmlWrapper $ renderHtml $
+                        then return $ buildResponse $ renderHtml $ htmlWrapper $
                             header tableName $ "There are links to the '" ++ chainName
                                              ++ "' chain from chains : " ++ show linkedChains
                                              ++ ". Please, remove all links before deleting a chain"
                         else
-                            return $ buildResponse $ Template.htmlWrapper $ renderHtml $ do
+                            return $ buildResponse $ renderHtml $ htmlWrapper $ do
                                 header tableName $ "Delete '" ++ chainName
                                                  ++ "' user defined chain from '"
                                                  ++ tableName ++ "' table"

@@ -3,7 +3,6 @@ module IptAdmin.EditPolicyPage where
 
 import Control.Monad.Error
 import Happstack.Server.SimpleHTTP
-import Template
 import IptAdmin.EditPolicyForm.Render
 import IptAdmin.Render
 import IptAdmin.System

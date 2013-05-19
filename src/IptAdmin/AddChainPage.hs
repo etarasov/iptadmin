@@ -3,7 +3,6 @@ module IptAdmin.AddChainPage where
 
 import Control.Monad.Error
 import Happstack.Server.SimpleHTTP
-import Template
 import IptAdmin.EditChainForm.Parse
 import IptAdmin.EditChainForm.Render
 import IptAdmin.Render

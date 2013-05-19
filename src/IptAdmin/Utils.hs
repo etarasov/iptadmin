@@ -18,6 +18,7 @@ import Text.ParserCombinators.Parsec.Prim hiding (State (..))
 import Text.ParserCombinators.Parsec.Char
 import Text.ParserCombinators.Parsec.Combinator
 
+
 buildResponse :: String -> Response
 buildResponse input = let respPlain = toResponse input
                       in respPlain {rsHeaders = mkHeaders [("Content-type", "text/html; charset=utf8")]}

@@ -3,7 +3,6 @@ module IptAdmin.EditPage where
 import Control.Monad.Error
 import Control.Monad.State
 import Happstack.Server.SimpleHTTP
-import Template
 import IptAdmin.EditForm
 import IptAdmin.EditForm.Class
 import IptAdmin.EditForm.Render
